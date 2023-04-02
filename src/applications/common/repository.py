@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domains import Executable
+from src.domains import Executable
 
 
 class Repository(ABC):

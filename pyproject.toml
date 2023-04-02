@@ -1,10 +1,9 @@
 [tool.poetry]
-name = "advanced-billing"
+name = "clean_architecture"
 version = "0.1.0"
 description = ""
 authors = ["dungpq <dungphanquang@vccorp.vn>"]
 readme = "README.md"
-packages = [{include = "advanced_billing"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
