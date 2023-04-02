@@ -1,0 +1,3 @@
+class DomainException(Exception):
+    pass
+
