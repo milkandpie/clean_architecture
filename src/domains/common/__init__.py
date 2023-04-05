@@ -1,3 +1,5 @@
-from .based_entity import BasedEntity
+from .based_entity import (
+    BasedEntity,
+    BaseEntityEvent)
 from .based_event import BasedEvent
 from .executable import Executable

@@ -1,5 +1,11 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class Command(ABC):
     pass
+
+
+class CommandHandleable(ABC):
+    @abstractmethod
+    def handle(self, command: Command):
+        pass

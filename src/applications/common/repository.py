@@ -5,9 +5,9 @@ from src.domains import Executable
 
 class Repository(ABC):
     @abstractmethod
-    async def create(self) -> Executable:
+    async def create(self, command):
         pass
 
     @abstractmethod
-    async def save(self, domain: Executable) -> bool:
+    async def save(self, domain):
         pass
