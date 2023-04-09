@@ -7,7 +7,7 @@ from .based_event import BasedEvent
 
 @dataclass
 class BasedEntity:
-    id: str = str(uuid.uuid4())
+    id: str
 
     def __init__(self):
         self.__events: List[BasedEvent] = []
