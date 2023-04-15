@@ -9,9 +9,7 @@ from src.applications.common import (
 from src.domains import (
     Balance,
     BalanceDecreased,
-    BalanceAdjustment,
     BalanceDecreasedFailed,
-    BalanceAdjustmentCreated,
     BalanceInsufficientException)
 
 
@@ -31,7 +29,7 @@ class BalanceChargeableService(CommandHandleable):
 
         self.__balance = Balance(current_amount)
 
-    def handle(self):
+    def handle(self) -> Balance:
         try:
             self.__balance.decrease(self.__charged_amount)
 
@@ -39,7 +37,7 @@ class BalanceChargeableService(CommandHandleable):
         except BalanceInsufficientException:
             self.__balance.add_event(BalanceDecreasedFailed(self.__email, self.__executed_at, self.__balance))
 
-        return self
+        return self.__balance
 
 
 class ChargedRepository(Repository, ABC):
