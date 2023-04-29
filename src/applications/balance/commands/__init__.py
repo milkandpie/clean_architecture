@@ -1,7 +1,7 @@
 from .balance_charge import (
     BalanceChargedCommand,
-    ChargedRepository,
-    BalanceChargedCommandHandler)
+    BalanceChargedRepository,
+    BalanceChargeableService)
 from .balance_top_up import (
     BalanceTopUpCommand,
     TopUpRepository,

@@ -1,8 +1,11 @@
-from src.applications import ChargedRepository, BalanceChargedCommand
+from src.applications import BalanceChargedRepository, BalanceChargedCommand
 from src.domains import Balance
 
 
-class MongoChargedRepository(ChargedRepository):
+class MongoChargedRepository(BalanceChargedRepository):
+    async def get_current_adjustment_number(self) -> int:
+        return 0
+
     async def create(self, command: BalanceChargedCommand) -> Balance:
         # async query balance with command's email value
         return Balance(0)
@@ -15,4 +18,4 @@ class MongoChargedRepository(ChargedRepository):
             event_document = event.to_dict()
         # async commit transaction
         # Return some DTO
-        return Balance
+        return balance

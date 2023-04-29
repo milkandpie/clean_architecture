@@ -1,13 +1,15 @@
 from dataclasses import dataclass
 
-from src.domains.common import BasedEntity
+from src.domains.common import (
+    Entity,
+    EntityId)
 
 
 @dataclass
-class BalanceAdjustment(BasedEntity):
+class BalanceAdjustment(Entity):
     number: int
     comment: str
     amount: float
-    balance_id: str
+    balance_id: EntityId
     adjustment_type: str
     balance_amount: float

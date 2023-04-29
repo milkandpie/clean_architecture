@@ -3,6 +3,9 @@ from src.domains import Balance
 
 
 class MongoTopUpRepository(TopUpRepository):
+    async def get_current_adjustment_number(self) -> int:
+        return 0
+
     async def create(self, command: BalanceTopUpCommand) -> Balance:
         # async query balance with command's email value
         return Balance(0)
@@ -15,4 +18,4 @@ class MongoTopUpRepository(TopUpRepository):
             event_document = event.to_dict()
         # async commit transaction
         # Return some DTO
-        return Balance
+        return balance

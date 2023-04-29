@@ -6,47 +6,40 @@ from src.applications.common import (
     Command,
     Repository,
     CommandHandleable)
-from src.domains import (
-    Balance,
-    BalanceDecreased,
-    BalanceAdjustment,
-    BalanceDecreasedFailed,
-    BalanceAdjustmentCreated,
-    BalanceInsufficientException)
+from src.domains import Balance
 
 
 @dataclass()
 class BalanceChargedCommand(Command):
     email: str
-    amount: float
+    amount: int
+    comment: str
     executed_at: datetime
 
 
+class BalanceChargedRepository(Repository, ABC):
+    @abstractmethod
+    async def create(self, command: BalanceChargedCommand) -> Balance:
+        pass
+
+    @abstractmethod
+    async def save(self, balance: Balance) -> Balance:
+        pass
+
+    @abstractmethod
+    async def get_current_adjustment_number(self) -> int:
+        pass
+
+
 class BalanceChargeableService(CommandHandleable):
-    def __init__(self, charged_amount: float, current_amount: float, email: str,
-                 executed_at: datetime = None):
-        self.__email = email
-        self.__executed_at = executed_at
-        self.__charged_amount = charged_amount
+    def __init__(self, repository: BalanceChargedRepository):
+        self.__repository = repository
 
-        self.__balance = Balance(current_amount)
+    async def handle(self, command: BalanceChargedCommand):
+        balance = await self.__repository.create(command)
+        current_number = await self.__repository.get_current_adjustment_number()
+        balance.increase(command.amount,
+                         number=current_number,
+                         comment=command.comment)
 
-    def handle(self):
-        try:
-            self.__balance.decrease(self.__charged_amount)
-
-            self.__balance.add_event(BalanceDecreased(self.__email, self.__executed_at, self.__balance))
-        except BalanceInsufficientException:
-            self.__balance.add_event(BalanceDecreasedFailed(self.__email, self.__executed_at, self.__balance))
-
-        return self
-
-
-class ChargedRepository(Repository, ABC):
-    @abstractmethod
-    async def create(self, command: BalanceChargedCommand) -> BalanceChargedCommandHandler:
-        pass
-
-    @abstractmethod
-    async def save(self, balance: BalanceChargedCommandHandler):
-        pass
+        return await self.__repository.save(balance)

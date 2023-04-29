@@ -6,13 +6,14 @@ from src.applications.common import (
     Command,
     Repository,
     CommandHandleable)
-from src.domains import Balance, BalanceIncreased
+from src.domains import Balance
 
 
 @dataclass()
 class BalanceTopUpCommand(Command):
     email: str
-    amount: float
+    amount: int
+    comment: str
     executed_at: datetime
 
 
@@ -25,6 +26,10 @@ class TopUpRepository(Repository, ABC):
     async def save(self, balance: Balance):
         pass
 
+    @abstractmethod
+    async def get_current_adjustment_number(self) -> int:
+        pass
+
 
 class BalanceTopUpCommandHandler(CommandHandleable):
     def __init__(self, repository: TopUpRepository):
@@ -32,8 +37,10 @@ class BalanceTopUpCommandHandler(CommandHandleable):
 
     async def handle(self, command: BalanceTopUpCommand):
         balance = await self.__repository.create(command)
-        # TODO: Balance adjustment
-        balance.increase(command.amount)
-        balance.add_event(BalanceIncreased(command.email, command.executed_at, balance))
 
-        return self.__repository.save(balance)
+        current_adjustment_number = await self.__repository.get_current_adjustment_number()
+        balance.increase(command.amount,
+                         number=current_adjustment_number,
+                         comment=command.comment)
+
+        return await self.__repository.save(balance)

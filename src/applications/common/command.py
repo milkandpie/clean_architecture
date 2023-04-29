@@ -7,5 +7,5 @@ class Command(ABC):
 
 class CommandHandleable(ABC):
     @abstractmethod
-    def handle(self):
+    def handle(self, command: Command):
         pass

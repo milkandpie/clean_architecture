@@ -1,4 +1,4 @@
-from ._domain_exception import DomainException
+from src.domains.common import DomainException
 
 
 class BalanceInsufficientException(DomainException):
