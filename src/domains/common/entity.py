@@ -1,19 +1,17 @@
-from dataclasses import dataclass, asdict
+from abc import ABC
 from typing import List
 
 from .event import BasedEvent
 from .value_object import EntityId, Comparable
 
 
-@dataclass
 class Entity(Comparable):
-    id: EntityId
-
-    def __init__(self):
+    def __init__(self, _id: EntityId = None):
+        self.__id: EntityId = _id or EntityId()
         self.__events: List[BasedEvent] = []
 
     def get_comparable(self):
-        return self.id.get_comparable()
+        return self.__id.get_comparable()
 
     def get_events(self) -> List[BasedEvent]:
         return self.__events
@@ -27,22 +25,28 @@ class Entity(Comparable):
     def clear_event(self):
         self.__events = []
 
-    def __eq__(self, other: 'Entity'):
+    def to_dict(self) -> dict:
+        return {
+            'id': str(self)
+        }
+
+    def get_id(self) -> EntityId:
+        return self.__id
+
+    def __eq__(self, other: Comparable):
         return self.get_comparable() == other.get_comparable()
 
     def __repr__(self):
         return self.get_comparable()
 
-    def to_dict(self) -> dict:
-        return asdict(self)
 
+class BaseEntityEvent(BasedEvent, ABC):
 
-class BaseEntityEvent(BasedEvent):
     def __init__(self, entity: Entity):
         self.__entity = entity
 
-    def to_dict(self) -> dict:
-        return {'id': str(self.__entity)}
+    def get_entity(self) -> Entity:
+        return self.__entity
 
 
 class AggregateRoot(Entity):

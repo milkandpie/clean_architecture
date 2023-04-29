@@ -12,3 +12,4 @@ class Repository(ABC):
     @abstractmethod
     async def save(self, domain: AggregateRoot) -> AggregateRoot:
         pass
+

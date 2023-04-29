@@ -1,50 +1,41 @@
-from dataclasses import dataclass, field
-from datetime import datetime
 from typing import List
 
 from src.domains.common import AggregateRoot, EntityId
 from .constants import DECREASED, INCREASED
 from .entities import BalanceAdjustment
-from .events import (
-    BalanceIncreased,
-    BalanceDecreased,
-    BalanceDecreasedFailed)
 
 
-@dataclass
 class Balance(AggregateRoot):
-    amount: int
-    account_id: EntityId
-    balance_adjustments: List[BalanceAdjustment] = field(default_factory=lambda: [])
+    def __init__(self, amount: int, balance_adjustment_number: int, account_id: EntityId,
+                 _id: EntityId = None):
+        super().__init__(_id)
+        self.__amount: int = amount
+        self.__account_id: EntityId = account_id
+        self.__balance_adjustment_number: int = balance_adjustment_number
 
-    def increase(self, amount: int,
-                 increased_at: datetime = None,
-                 comment: str = None,
-                 number: int = 0) -> int:
-        balance_adjustment = BalanceAdjustment(number, comment, amount,
-                                               self.id, INCREASED,
-                                               self.amount)
-        self.balance_adjustments.append(balance_adjustment)
-        self.add_event(BalanceIncreased(self.amount, amount, increased_at, self))
+        self.__balance_adjustments: List[BalanceAdjustment] = []
 
-        self.amount += amount
+    def charge(self, amount: int,
+               comment: str = None) -> int:
+        self.__balance_adjustment_number += 1
+        current_amount = self.__amount
+        self.__amount -= amount
 
-        return True
+        adjustment_type = INCREASED if current_amount <= self.__amount else DECREASED
+        balance_adjustment = BalanceAdjustment(self.__balance_adjustment_number, comment, amount,
+                                               self.get_id(), adjustment_type,
+                                               self.__amount)
+        self.__balance_adjustments.append(balance_adjustment)
+        return self.__amount
 
-    def decrease(self, amount: int,
-                 decreased_at: datetime = None,
-                 comment: str = None,
-                 number: int = 0) -> int:
-        if self.amount < amount:
-            self.add_event(BalanceDecreasedFailed(self.amount, amount, decreased_at, self))
-            return False
+    def get_amount(self) -> int:
+        return self.__amount
 
-        balance_adjustment = BalanceAdjustment(number, comment, amount,
-                                               self.id, DECREASED,
-                                               self.amount)
-        self.balance_adjustments.append(balance_adjustment)
-        self.add_event(BalanceDecreased(self.amount, amount, decreased_at, self))
+    def get_balance_adjustments(self) -> List[BalanceAdjustment]:
+        return self.__balance_adjustments
 
-        self.amount -= amount
+    def get_account_id(self) -> EntityId:
+        return self.__account_id
 
-        return True
+    def get_balance_adjustment_number(self) -> int:
+        return self.__balance_adjustment_number

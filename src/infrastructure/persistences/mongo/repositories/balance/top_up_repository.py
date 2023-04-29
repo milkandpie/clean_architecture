@@ -1,12 +1,9 @@
-from src.applications import TopUpRepository, BalanceTopUpCommand
+from src.applications import BalanceIncreasingRepository, BalanceIncreasingCommand
 from src.domains import Balance
 
 
-class MongoTopUpRepository(TopUpRepository):
-    async def get_current_adjustment_number(self) -> int:
-        return 0
-
-    async def create(self, command: BalanceTopUpCommand) -> Balance:
+class MongoBalanceIncreasingRepository(BalanceIncreasingRepository):
+    async def create(self, command: BalanceIncreasingCommand) -> Balance:
         # async query balance with command's email value
         return Balance(0)
 

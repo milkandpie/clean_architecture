@@ -1,3 +1,4 @@
+import uuid
 from abc import ABC, abstractmethod
 
 
@@ -9,7 +10,7 @@ class Comparable(ABC):
 
 class ValueObject(Comparable, ABC):
 
-    def __eq__(self, other: 'ValueObject'):
+    def __eq__(self, other: Comparable):
         return self.get_comparable() == other.get_comparable()
 
     def __repr__(self):
@@ -17,8 +18,8 @@ class ValueObject(Comparable, ABC):
 
 
 class EntityId(ValueObject):
-    def __init__(self, _id: str):
-        self.__id = _id
+    def __init__(self, _id: str = None):
+        self.__id = _id or str(uuid.uuid4())
 
     def get_comparable(self):
         return self.__id
