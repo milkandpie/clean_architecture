@@ -1,9 +1,9 @@
-from src.applications import BalanceIncreasingRepository, BalanceIncreasingCommand
+from src.applications import BalanceTopUpRepository, BalanceTopUpCommand
 from src.domains import Balance
 
 
-class MongoBalanceIncreasingRepository(BalanceIncreasingRepository):
-    async def create(self, command: BalanceIncreasingCommand) -> Balance:
+class MongoBalanceTopUpRepository(BalanceTopUpRepository):
+    async def create(self, command: BalanceTopUpCommand) -> Balance:
         # async query balance with command's email value
         return Balance(0)
 

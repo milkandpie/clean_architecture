@@ -6,11 +6,11 @@ from src.domains import Balance, EntityId
 from src.applications import (
     BalanceDecreasingService,
     BalanceDecreasingCommand,
-    BalanceIncreasingService,
-    BalanceIncreasingCommand)
+    BalanceTopUpService,
+    BalanceTopUpCommand)
 from src.infrastructure import (
     InMemoryBalanceDecreasingRepository,
-    InMemoryBalanceIncreasingRepository,
+    InMemoryBalanceTopUpRepository,
     InMemorySession)
 
 
@@ -26,7 +26,7 @@ def test_multiple_charges(balance, top_up_amounts, expected_amount):
 
 
 @pytest.mark.asyncio
-async def test_decreasing():
+async def test_decreasing_failed():
     db = {}
     session = InMemorySession(db)
     repository = InMemoryBalanceDecreasingRepository(session)
@@ -37,21 +37,41 @@ async def test_decreasing():
                                        'Test decreased',
                                        datetime.utcnow())
 
-    balance = await command_handler.handle(command)
+    await command_handler.handle(command)
+
+    balance = await repository.create(command)
     assert balance.get_amount() == 0
+
+
+@pytest.mark.asyncio
+async def test_decreasing():
+    db = {'balance:lord_viper@mail.com': 15000}
+    session = InMemorySession(db)
+    repository = InMemoryBalanceDecreasingRepository(session)
+    command_handler = BalanceDecreasingService(repository)
+
+    command = BalanceDecreasingCommand('lord_viper@mail.com',
+                                       1000,
+                                       'Test decreased',
+                                       datetime.utcnow())
+
+    await command_handler.handle(command)
+    balance = await repository.create(command)
+    assert balance.get_amount() == 14000
 
 
 @pytest.mark.asyncio
 async def test_increasing():
     db = {}
     session = InMemorySession(db)
-    repository = InMemoryBalanceIncreasingRepository(session)
-    command_handler = BalanceIncreasingService(repository)
+    repository = InMemoryBalanceTopUpRepository(session)
+    command_handler = BalanceTopUpService(repository)
 
-    command = BalanceIncreasingCommand('lord_viper@mail.com',
-                                       1000,
-                                       'Test decreased',
-                                       datetime.utcnow())
+    command = BalanceTopUpCommand('lord_viper@mail.com',
+                                  1000,
+                                  'Test decreased',
+                                  datetime.utcnow())
+    await command_handler.handle(command)
+    balance = await repository.create(command)
 
-    balance = await command_handler.handle(command)
     assert balance.get_amount() == 1000

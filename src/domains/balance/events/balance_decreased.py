@@ -16,9 +16,7 @@ class BalanceDecreased(BaseEntityEvent):
         return 'balance.decreased'
 
     def to_dict(self) -> dict:
-        result = super().to_dict()
         return {
-            **result,
             'decreased_at': self.__decreased_at,
             'balance_id': str(self.get_entity()),
             'balance_amount': self.__balance_amount,

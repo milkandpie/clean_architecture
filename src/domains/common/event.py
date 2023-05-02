@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class BasedEvent(ABC):
+class Event(ABC):
     def to_dict(self) -> dict:
         return {'event_name': self.create_event_name()}
 

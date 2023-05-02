@@ -1,13 +1,13 @@
-from src.applications import BalanceIncreasingRepository, BalanceIncreasingCommand
+from src.applications import BalanceTopUpRepository, BalanceTopUpCommand
 from src.domains import Balance, EntityId
 from src.infrastructure.persistences.in_memory.session import InMemorySession
 
 
-class InMemoryBalanceIncreasingRepository(BalanceIncreasingRepository):
+class InMemoryBalanceTopUpRepository(BalanceTopUpRepository):
     def __init__(self, session: InMemorySession):
         self.__session = session
 
-    async def create(self, command: BalanceIncreasingCommand) -> Balance:
+    async def create(self, command: BalanceTopUpCommand) -> Balance:
         current_amount = self.__session.get(f'balance:{command.email}')
         if current_amount is None:
             return Balance(0, 0, EntityId(command.email))

@@ -20,3 +20,14 @@ class BalanceAdjustment(Entity):
 
     def get_number(self) -> int:
         return self.__number
+
+    def to_dict(self) -> dict:
+        return {
+            **super().to_dict(),
+            'amount': self.__amount,
+            'number': self.__number,
+            'comment': self.__comment,
+            'balance_id': str(self.__balance_id),
+            'balance_amount': self.__balance_amount,
+            'adjustment_type': self.__adjustment_type
+        }

@@ -2,7 +2,7 @@ from .balance_decrease import (
     BalanceDecreasingCommand,
     BalanceDecreasingRepository,
     BalanceDecreasingService)
-from .balance_increase import (
-    BalanceIncreasingCommand,
-    BalanceIncreasingRepository,
-    BalanceIncreasingService)
+from .balance_top_up import (
+    BalanceTopUpCommand,
+    BalanceTopUpRepository,
+    BalanceTopUpService)

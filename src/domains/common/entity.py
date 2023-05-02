@@ -1,25 +1,25 @@
 from abc import ABC
 from typing import List
 
-from .event import BasedEvent
+from .event import Event
 from .value_object import EntityId, Comparable
 
 
 class Entity(Comparable):
     def __init__(self, _id: EntityId = None):
         self.__id: EntityId = _id or EntityId()
-        self.__events: List[BasedEvent] = []
+        self.__events: List[Event] = []
 
     def get_comparable(self):
         return self.__id.get_comparable()
 
-    def get_events(self) -> List[BasedEvent]:
+    def get_events(self) -> List[Event]:
         return self.__events
 
-    def add_event(self, event: BasedEvent):
+    def add_event(self, event: Event):
         self.__events.append(event)
 
-    def remove_event(self, event: BasedEvent):
+    def remove_event(self, event: Event):
         self.__events.remove(event)
 
     def clear_event(self):
@@ -40,7 +40,11 @@ class Entity(Comparable):
         return self.get_comparable()
 
 
-class BaseEntityEvent(BasedEvent, ABC):
+class AggregateRoot(Entity):
+    pass
+
+
+class BaseEntityEvent(Event, ABC):
 
     def __init__(self, entity: Entity):
         self.__entity = entity
@@ -48,6 +52,7 @@ class BaseEntityEvent(BasedEvent, ABC):
     def get_entity(self) -> Entity:
         return self.__entity
 
-
-class AggregateRoot(Entity):
-    pass
+    def create_payload(self) -> dict:
+        return {
+            'model_id': str(self.__entity)
+        }

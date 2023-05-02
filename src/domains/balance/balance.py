@@ -15,6 +15,21 @@ class Balance(AggregateRoot):
 
         self.__balance_adjustments: List[BalanceAdjustment] = []
 
+    def top_up(self, amount: int,
+               comment: str = None) -> bool:
+        self.charge(-abs(amount), comment=comment)
+        return True
+
+    def decrease(self, decreasing_amount: int,
+                 comment: str = None) -> bool:
+        amount_before_decreasing = self.__amount
+        if amount_before_decreasing < decreasing_amount:
+            return False
+
+        self.charge(decreasing_amount, comment=comment)
+
+        return True
+
     def charge(self, amount: int,
                comment: str = None) -> int:
         self.__balance_adjustment_number += 1
@@ -22,9 +37,9 @@ class Balance(AggregateRoot):
         self.__amount -= amount
 
         adjustment_type = INCREASED if current_amount <= self.__amount else DECREASED
-        balance_adjustment = BalanceAdjustment(self.__balance_adjustment_number, comment, amount,
+        balance_adjustment = BalanceAdjustment(self.__balance_adjustment_number, comment, abs(amount),
                                                self.get_id(), adjustment_type,
-                                               self.__amount)
+                                               current_amount)
         self.__balance_adjustments.append(balance_adjustment)
         return self.__amount
 

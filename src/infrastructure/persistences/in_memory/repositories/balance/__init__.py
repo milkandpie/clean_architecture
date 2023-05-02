@@ -1,2 +1,2 @@
 from .charged_repository import InMemoryBalanceDecreasingRepository
-from .top_up_repository import InMemoryBalanceIncreasingRepository
+from .top_up_repository import InMemoryBalanceTopUpRepository

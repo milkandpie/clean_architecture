@@ -12,7 +12,7 @@ class InMemoryBalanceDecreasingRepository(BalanceDecreasingRepository):
         if current_amount is None:
             return Balance(0, 0, EntityId(command.email))
 
-        current_ba_number = self.__session.get(f'balance_adjustment:{command.email}:balance_adjustment_count')
+        current_ba_number = self.__session.get(f'balance_adjustment:{command.email}:balance_adjustment_count') or 0
         return Balance(current_amount, current_ba_number, EntityId(command.email))
 
     async def rollback(self, balance: Balance) -> Balance:
