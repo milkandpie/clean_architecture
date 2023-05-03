@@ -37,8 +37,8 @@ class BalanceTopUpService(CommandHandleable):
 
     async def handle(self, command: BalanceTopUpCommand):
         balance = await self.__repository.create(command)
-        amount_before_increasing = balance.get_amount()
-        balance.top_up(command.amount, comment=command.comment)
+        balance.top_up(command.amount,
+                       comment=command.comment,
+                       executed_at=command.executed_at)
 
-        balance.add_event(BalanceIncreased(amount_before_increasing, command.amount, command.executed_at, balance))
         await self.__repository.save(balance)

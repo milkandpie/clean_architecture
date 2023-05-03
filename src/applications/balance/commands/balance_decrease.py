@@ -42,14 +42,6 @@ class BalanceDecreasingService(CommandHandleable):
 
     async def handle(self, command: BalanceDecreasingCommand):
         balance = await self.__repository.create(command)
-        amount_before_decreasing = balance.get_amount()
 
-        is_decreased = balance.decrease(command.amount, comment=command.comment)
-
-        if is_decreased:
-            balance.add_event(BalanceDecreased(amount_before_decreasing, command.amount, command.executed_at, balance))
-        else:
-            balance.add_event(BalanceDecreasedFailed(amount_before_decreasing,
-                                                     command.amount, command.executed_at, balance))
-
+        balance.decrease(command.amount, comment=command.comment)
         await self.__repository.save(balance)

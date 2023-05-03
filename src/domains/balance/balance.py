@@ -1,8 +1,13 @@
+from datetime import datetime
 from typing import List
 
 from src.domains.common import AggregateRoot, EntityId
 from .constants import DECREASED, INCREASED
 from .entities import BalanceAdjustment
+from .events import (
+    BalanceIncreased,
+    BalanceDecreased,
+    BalanceDecreasedFailed)
 
 
 class Balance(AggregateRoot):
@@ -16,18 +21,24 @@ class Balance(AggregateRoot):
         self.__balance_adjustments: List[BalanceAdjustment] = []
 
     def top_up(self, amount: int,
-               comment: str = None) -> bool:
+               comment: str = None,
+               executed_at: datetime = None) -> bool:
+        before_top_up_amount = self.__amount
+
         self.charge(-abs(amount), comment=comment)
+        self.add_event(BalanceIncreased(before_top_up_amount, amount, executed_at, self))
         return True
 
     def decrease(self, decreasing_amount: int,
-                 comment: str = None) -> bool:
+                 comment: str = None,
+                 executed_at: datetime = None) -> bool:
         amount_before_decreasing = self.__amount
         if amount_before_decreasing < decreasing_amount:
+            self.add_event(BalanceDecreasedFailed(amount_before_decreasing, decreasing_amount, executed_at, self))
             return False
 
         self.charge(decreasing_amount, comment=comment)
-
+        self.add_event(BalanceDecreased(amount_before_decreasing, decreasing_amount, executed_at, self))
         return True
 
     def charge(self, amount: int,
