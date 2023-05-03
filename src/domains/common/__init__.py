@@ -1,7 +1,6 @@
 from .entity import (
     Entity,
-    AggregateRoot,
-    BaseEntityEvent)
+    AggregateRoot)
 from .value_object import (
     ValueObject,
     EntityId)

@@ -1,4 +1,6 @@
-from src.applications import BalanceTopUpRepository, BalanceTopUpCommand
+from src.applications import (
+    BalanceTopUpRepository,
+    BalanceTopUpCommand)
 from src.domains import Balance, EntityId
 from src.infrastructure.persistences.in_memory.session import InMemorySession
 

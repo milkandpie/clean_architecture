@@ -6,13 +6,10 @@ from src.applications.common import (
     Command,
     Repository,
     CommandHandleable)
-from src.domains import (
-    Balance,
-    BalanceDecreased,
-    BalanceDecreasedFailed)
+from src.domains import Balance
 
 
-@dataclass()
+@dataclass
 class BalanceDecreasingCommand(Command):
     email: str
     amount: int
@@ -38,10 +35,17 @@ class BalanceDecreasingRepository(Repository, ABC):
 
 class BalanceDecreasingService(CommandHandleable):
     def __init__(self, repository: BalanceDecreasingRepository):
+        super().__init__()
         self.__repository = repository
 
     async def handle(self, command: BalanceDecreasingCommand):
         balance = await self.__repository.create(command)
 
-        balance.decrease(command.amount, comment=command.comment)
+        balance.decrease(command.amount,
+                         comment=command.comment,
+                         executed_at=command.executed_at)
+
+        for event in balance.get_events():
+            self.add_integrate(event, balance, key=f'balance.{command.email}')
+
         await self.__repository.save(balance)

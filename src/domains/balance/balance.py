@@ -20,13 +20,13 @@ class Balance(AggregateRoot):
 
         self.__balance_adjustments: List[BalanceAdjustment] = []
 
-    def top_up(self, amount: int,
+    def top_up(self, top_up_amount: int,
                comment: str = None,
                executed_at: datetime = None) -> bool:
         before_top_up_amount = self.__amount
 
-        self.charge(-abs(amount), comment=comment)
-        self.add_event(BalanceIncreased(before_top_up_amount, amount, executed_at, self))
+        self.charge(-abs(top_up_amount), comment=comment)
+        self.add_event(BalanceIncreased(before_top_up_amount, top_up_amount, executed_at, self.get_id()))
         return True
 
     def decrease(self, decreasing_amount: int,
@@ -34,21 +34,22 @@ class Balance(AggregateRoot):
                  executed_at: datetime = None) -> bool:
         amount_before_decreasing = self.__amount
         if amount_before_decreasing < decreasing_amount:
-            self.add_event(BalanceDecreasedFailed(amount_before_decreasing, decreasing_amount, executed_at, self))
+            self.add_event(BalanceDecreasedFailed(amount_before_decreasing, decreasing_amount, executed_at,
+                                                  self.get_id()))
             return False
 
         self.charge(decreasing_amount, comment=comment)
-        self.add_event(BalanceDecreased(amount_before_decreasing, decreasing_amount, executed_at, self))
+        self.add_event(BalanceDecreased(amount_before_decreasing, decreasing_amount, executed_at, self.get_id()))
         return True
 
-    def charge(self, amount: int,
+    def charge(self, charging_amount: int,
                comment: str = None) -> int:
         self.__balance_adjustment_number += 1
         current_amount = self.__amount
-        self.__amount -= amount
+        self.__amount -= charging_amount
 
         adjustment_type = INCREASED if current_amount <= self.__amount else DECREASED
-        balance_adjustment = BalanceAdjustment(self.__balance_adjustment_number, comment, abs(amount),
+        balance_adjustment = BalanceAdjustment(self.__balance_adjustment_number, comment, abs(charging_amount),
                                                self.get_id(), adjustment_type,
                                                current_amount)
         self.__balance_adjustments.append(balance_adjustment)

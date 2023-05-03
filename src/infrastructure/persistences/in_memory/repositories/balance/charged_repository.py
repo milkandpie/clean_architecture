@@ -1,5 +1,7 @@
-from src.applications import BalanceDecreasingRepository, BalanceDecreasingCommand
-from src.domains import Balance, EntityId, AggregateRoot
+from src.applications import (
+    BalanceDecreasingRepository,
+    BalanceDecreasingCommand)
+from src.domains import Balance, EntityId
 from src.infrastructure.persistences.in_memory.session import InMemorySession
 
 

@@ -1,4 +1,3 @@
-from abc import ABC
 from typing import List
 
 from .event import Event
@@ -22,7 +21,7 @@ class Entity(Comparable):
     def remove_event(self, event: Event):
         self.__events.remove(event)
 
-    def clear_event(self):
+    def clear_events(self):
         self.__events = []
 
     def to_dict(self) -> dict:
@@ -43,16 +42,3 @@ class Entity(Comparable):
 class AggregateRoot(Entity):
     pass
 
-
-class BaseEntityEvent(Event, ABC):
-
-    def __init__(self, entity: Entity):
-        self.__entity = entity
-
-    def get_entity(self) -> Entity:
-        return self.__entity
-
-    def create_payload(self) -> dict:
-        return {
-            'model_id': str(self.__entity)
-        }

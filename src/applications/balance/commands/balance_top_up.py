@@ -6,12 +6,10 @@ from src.applications.common import (
     Command,
     Repository,
     CommandHandleable)
-from src.domains import (
-    Balance,
-    BalanceIncreased)
+from src.domains import Balance
 
 
-@dataclass()
+@dataclass
 class BalanceTopUpCommand(Command):
     email: str
     amount: int
@@ -33,6 +31,7 @@ class BalanceTopUpRepository(Repository, ABC):
 
 class BalanceTopUpService(CommandHandleable):
     def __init__(self, repository: BalanceTopUpRepository):
+        super().__init__()
         self.__repository = repository
 
     async def handle(self, command: BalanceTopUpCommand):
@@ -40,5 +39,8 @@ class BalanceTopUpService(CommandHandleable):
         balance.top_up(command.amount,
                        comment=command.comment,
                        executed_at=command.executed_at)
+
+        for event in balance.get_events():
+            self.add_integrate(event, balance, key=command.email)
 
         await self.__repository.save(balance)
