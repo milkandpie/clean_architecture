@@ -1,3 +1,2 @@
-from ._domain_exception import DomainException
 from .balance_insufficient_exception import BalanceInsufficientException
 
