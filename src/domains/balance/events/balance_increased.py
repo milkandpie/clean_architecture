@@ -9,5 +9,4 @@ class BalanceIncreased(Event):
     increased_amount: int
     balance_amount: int
     increased_at: datetime
-    balance_id: EntityId
 

@@ -45,7 +45,4 @@ class BalanceDecreasingService(CommandHandleable):
                          comment=command.comment,
                          executed_at=command.executed_at)
 
-        for event in balance.get_events():
-            self.add_integrate(event, balance, key=f'balance.{command.email}')
-
         await self.__repository.save(balance)

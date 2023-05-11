@@ -2,10 +2,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List
 
-from src.domains import Event, AggregateRoot
-from .integrated_event import (
-    IntegratedEvent,
-    DelayedEvent)
+from src.domains import (
+    DelayedEvent, DelayedEventHandled, DelayedEventHandler,
+    IntegrationEvent, IntegrationEventHandled, IntegrationEventHandler)
 
 
 @dataclass
@@ -13,34 +12,23 @@ class Command(ABC):
     pass
 
 
-class CommandHandleable(ABC):
+class CommandHandleable(IntegrationEventHandled, DelayedEventHandled, ABC):
     def __init__(self):
-        self.__events: List[IntegratedEvent] = []
-        self.__delayed_events: List[DelayedEvent] = []
+        self.__delayed_handler = DelayedEventHandler()
+        self.__integration_handler = IntegrationEventHandler()
 
     @abstractmethod
     def handle(self, command: Command):
         pass
 
-    def add_integrate(self, event: Event, aggregate: AggregateRoot,
-                      key: str = None):
-        self.__events.append(IntegratedEvent(event.create_event_name(),
-                                             str(aggregate.__class__.__name__).lower(),
-                                             aggregate.get_id(),
-                                             event.to_dict(),
-                                             key=key))
+    def add_delayed_event(self, event: DelayedEvent):
+        self.__delayed_handler.add_delayed_event(event)
 
-    def add_delayed(self, event: Event, aggregate: AggregateRoot,
-                    key: str = None, delayed: int = None):
-        self.__delayed_events.append(DelayedEvent(event.create_event_name(),
-                                                  str(aggregate.__class__.__name__).lower(),
-                                                  aggregate.get_id(),
-                                                  event.to_dict(),
-                                                  delayed=delayed,
-                                                  key=key))
+    def add_integration_event(self, event: IntegrationEvent):
+        self.__integration_handler.add_integration_event(event)
 
-    def get_integrated_events(self) -> List[IntegratedEvent]:
-        return self.__events
+    def get_delayed_events(self) -> List[DelayedEvent]:
+        return self.__delayed_handler.get_delayed_events()
 
-    def get_delayed_event(self) -> List[DelayedEvent]:
-        return self.__delayed_events
+    def get_integration_events(self) -> List[IntegrationEvent]:
+        return self.__integration_handler.get_integration_events()

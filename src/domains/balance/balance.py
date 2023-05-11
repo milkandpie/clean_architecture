@@ -1,7 +1,9 @@
 from datetime import datetime
 from typing import List
 
-from src.domains.common import AggregateRoot, EntityId
+from src.domains.common import (
+    AggregateRoot, EntityId, EventId,
+    IntegrationEvent, IntegrationEventHandled, IntegrationEventHandler)
 from .constants import DECREASED, INCREASED
 from .entities import BalanceAdjustment
 from .events import (
@@ -10,7 +12,7 @@ from .events import (
     BalanceDecreasedFailed)
 
 
-class Balance(AggregateRoot):
+class Balance(AggregateRoot, IntegrationEventHandled):
     def __init__(self, amount: int, balance_adjustment_number: int, account_id: EntityId,
                  _id: EntityId = None):
         super().__init__(_id)
@@ -18,6 +20,7 @@ class Balance(AggregateRoot):
         self.__account_id: EntityId = account_id
         self.__balance_adjustment_number: int = balance_adjustment_number
 
+        self.__integration_handler = IntegrationEventHandler()
         self.__balance_adjustments: List[BalanceAdjustment] = []
 
     def top_up(self, top_up_amount: int,
@@ -26,7 +29,10 @@ class Balance(AggregateRoot):
         before_top_up_amount = self.__amount
 
         self.charge(-abs(top_up_amount), comment=comment)
-        self.add_event(BalanceIncreased(before_top_up_amount, top_up_amount, executed_at, self.get_id()))
+        self.add_event(BalanceIncreased(EventId(), self.__class__.__name__, self.get_id(),
+                                        balance_amount=before_top_up_amount,
+                                        increased_amount=top_up_amount,
+                                        increased_at=executed_at))
         return True
 
     def decrease(self, decreasing_amount: int,
@@ -34,12 +40,17 @@ class Balance(AggregateRoot):
                  executed_at: datetime = None) -> bool:
         amount_before_decreasing = self.__amount
         if amount_before_decreasing < decreasing_amount:
-            self.add_event(BalanceDecreasedFailed(amount_before_decreasing, decreasing_amount, executed_at,
-                                                  self.get_id()))
+            self.add_event(BalanceDecreasedFailed(EventId(), self.__class__.__name__, self.get_id(),
+                                                  balance_amount=amount_before_decreasing,
+                                                  decreased_amount=decreasing_amount,
+                                                  executed_at=executed_at))
             return False
 
         self.charge(decreasing_amount, comment=comment)
-        self.add_event(BalanceDecreased(amount_before_decreasing, decreasing_amount, executed_at, self.get_id()))
+        self.add_event(BalanceDecreased(EventId(), self.__class__.__name__, self.get_id(),
+                                        balance_amount=amount_before_decreasing,
+                                        decreased_amount=decreasing_amount,
+                                        decreased_at=executed_at))
         return True
 
     def charge(self, charging_amount: int,
@@ -54,6 +65,12 @@ class Balance(AggregateRoot):
                                                current_amount)
         self.__balance_adjustments.append(balance_adjustment)
         return self.__amount
+
+    def get_integration_events(self) -> List[IntegrationEvent]:
+        return self.__integration_handler.get_integration_events()
+
+    def add_integration_event(self, event: IntegrationEvent):
+        self.__integration_handler.add_integration_event(event)
 
     def get_amount(self) -> int:
         return self.__amount

@@ -4,6 +4,9 @@ from .entity import (
 from .value_object import (
     ValueObject,
     EntityId)
-from .event import Event
+from .event import (
+    Event, EventId, EventHandleable,
+    DelayedEvent, DelayedEventHandled, DelayedEventHandler,
+    IntegrationEvent, IntegrationEventHandled, IntegrationEventHandler)
 from .exception import DomainException
 from .executable import Executable
