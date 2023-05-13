@@ -40,6 +40,7 @@ async def test_decreasing_failed():
     await command_handler.handle(command)
 
     balance = await repository.create(command)
+
     assert balance.get_amount() == 0
 
 

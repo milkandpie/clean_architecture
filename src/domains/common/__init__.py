@@ -6,6 +6,7 @@ from .value_object import (
     EntityId)
 from .event import (
     Event, EventId, EventHandleable,
+    DomainEvent,
     DelayedEvent, DelayedEventHandled, DelayedEventHandler,
     IntegrationEvent, IntegrationEventHandled, IntegrationEventHandler)
 from .exception import DomainException

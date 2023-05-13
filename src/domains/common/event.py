@@ -41,6 +41,7 @@ class EventHandleable(ABC):
 
 @dataclass
 class IntegrationEvent(Event):
+    event_name: str
     key: str = None
     payload: dict = field(default_factory=lambda: {})
 
@@ -91,3 +92,28 @@ class DelayedEventHandler(DelayedEventHandled):
 
     def get_delayed_events(self) -> List[DelayedEvent]:
         return self.__events
+
+
+class DomainEvent(Event):
+    def to_integration(self, event_name: str = None) -> IntegrationEvent:
+        payload = self.to_dict()
+        event_name = event_name or payload['event_name']
+
+        del payload['event_id']
+        del payload['event_name']
+        del payload['aggregate_id']
+        del payload['aggregate_name']
+
+        return IntegrationEvent.from_dict({
+            'payload': payload,
+            'key': self.event_id,
+            'event_name': event_name,
+            'event_id': self.event_id,
+            'aggregate_id': self.aggregate_id,
+            'aggregate_name': self.aggregate_name
+        })
+
+    def to_delayed(self, delayed_time, event_name: str = None) -> DelayedEvent:
+        integration_event = self.to_integration(event_name=event_name)
+        return DelayedEvent.from_dict({**integration_event.to_dict(),
+                                       'delayed': delayed_time})
