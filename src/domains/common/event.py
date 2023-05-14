@@ -31,14 +31,6 @@ class Event(ABC):
     def create_event_name(self) -> str:
         return ''.join('.%s' % c if c.isupper() else c
                        for c in self.__class__.__name__).strip('.').lower()
-
-
-class EventHandleable(ABC):
-    @abstractmethod
-    def handle(self, event: Event):
-        pass
-
-
 @dataclass
 class IntegrationEvent(Event):
     event_name: str
@@ -108,7 +100,7 @@ class DomainEvent(Event):
             'payload': payload,
             'key': self.event_id,
             'event_name': event_name,
-            'event_id': self.event_id,
+            'event_id': EventId(),
             'aggregate_id': self.aggregate_id,
             'aggregate_name': self.aggregate_name
         })

@@ -70,7 +70,7 @@ async def test_increasing():
 
     command = BalanceTopUpCommand('lord_viper@mail.com',
                                   1000,
-                                  'Test decreased',
+                                  'Test top up',
                                   datetime.utcnow())
     await command_handler.handle(command)
     balance = await repository.create(command)

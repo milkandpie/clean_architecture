@@ -30,7 +30,7 @@ class InMemoryBalanceTopUpRepository(BalanceTopUpRepository):
                                balance_adjustment.to_dict())
 
         for event in balance.get_events():
-            based_mediator.handle(event)
+            await based_mediator.handle(event)
 
         self.__session.add_delayed_events([event.to_dict() for event in balance.get_delayed_events()])
         self.__session.add_integrate_events([event.to_dict() for event in balance.get_integration_events()])

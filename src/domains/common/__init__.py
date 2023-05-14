@@ -5,7 +5,7 @@ from .value_object import (
     ValueObject,
     EntityId)
 from .event import (
-    Event, EventId, EventHandleable,
+    Event, EventId,
     DomainEvent,
     DelayedEvent, DelayedEventHandled, DelayedEventHandler,
     IntegrationEvent, IntegrationEventHandled, IntegrationEventHandler)

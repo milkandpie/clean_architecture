@@ -21,6 +21,10 @@ class Balance(AggregateRoot):
 
         self.__balance_adjustments: List[BalanceAdjustment] = []
 
+    @staticmethod
+    def create(account_id: EntityId):
+        return Balance(0, 0, account_id)
+
     def top_up(self, top_up_amount: int,
                comment: str = None,
                executed_at: datetime = None) -> bool:

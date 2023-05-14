@@ -1,0 +1,1 @@
+from .account_register_repository import InMemoryAccountRegisteringRepository
