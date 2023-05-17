@@ -5,9 +5,13 @@ import pytest
 from src.applications import (
     AccountRegisteringService,
     AccountRegisterCommand,
+    AccountLoginCommand,
+    AccountLoginService,
     BalanceTopUpService,
     BalanceTopUpCommand)
 from src.infrastructure import (
+    MD5PasswordEncoder,
+    InMemoryAccountLoggingInRepository,
     InMemoryAccountRegisteringRepository,
     InMemorySession, InMemoryBalanceTopUpRepository)
 
@@ -17,9 +21,10 @@ async def test_create_account():
     db = {}
     session = InMemorySession(db)
     repository = InMemoryAccountRegisteringRepository(session)
-    command_handler = AccountRegisteringService(repository)
+    command_handler = AccountRegisteringService(repository, MD5PasswordEncoder())
     command = AccountRegisterCommand('Oberyn Nymeros Martell',
                                      'lord_viper@mail.com',
+                                     '12345',
                                      datetime.utcnow())
 
     await command_handler.handle(command)
@@ -28,13 +33,36 @@ async def test_create_account():
 
 
 @pytest.mark.asyncio
+async def test_login():
+    db = {}
+    session = InMemorySession(db)
+    repository = InMemoryAccountRegisteringRepository(session)
+    command_handler = AccountRegisteringService(repository, MD5PasswordEncoder())
+    command = AccountRegisterCommand('Oberyn Nymeros Martell',
+                                     'lord_viper@mail.com',
+                                     '12345',
+                                     datetime.utcnow())
+
+    await command_handler.handle(command)
+
+    login_command = AccountLoginCommand('lord_viper@mail.com',
+                                        '12345',
+                                        datetime.utcnow())
+    login_repository = InMemoryAccountLoggingInRepository(session)
+    command_handler = AccountLoginService(login_repository, MD5PasswordEncoder())
+    await command_handler.handle(login_command)
+    assert 1
+
+
+@pytest.mark.asyncio
 async def test_top_up_created_account():
     db = {}
     session = InMemorySession(db)
     repository = InMemoryAccountRegisteringRepository(session)
-    command_handler = AccountRegisteringService(repository)
+    command_handler = AccountRegisteringService(repository, MD5PasswordEncoder())
     command = AccountRegisterCommand('Oberyn Nymeros Martell',
                                      'lord_viper@mail.com',
+                                     '12345',
                                      datetime.utcnow())
 
     await command_handler.handle(command)

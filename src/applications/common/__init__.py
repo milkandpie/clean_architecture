@@ -8,3 +8,6 @@ from .mediator import (
     EventsMediator,
     EventHandleable,
     RepositoryInjector)
+from .authentication import (
+    TokenEncoded,
+    PasswordEncoded)

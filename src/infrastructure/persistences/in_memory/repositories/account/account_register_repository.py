@@ -17,12 +17,13 @@ class InMemoryAccountRegisteringRepository(AccountRegisteringRepository):
     async def create(self, command: AccountRegisterCommand) -> Account:
         current_name = self.__session.get(f'account:{command.email}')
         if current_name is None:
-            return Account('', '', EntityId(command.email))
+            return Account('', '', _id=EntityId(command.email))
 
-        return Account(command.email, current_name, EntityId(command.email))
+        return Account(command.email, current_name, _id=EntityId(command.email))
 
     async def save(self, account: Account):
         self.__session.set(f'account:{account.get_email()}', account.get_name())
+        self.__session.set(f'password:{account.get_email()}', account.get_encoded_password())
 
         injector = InMemoryRepositoryInjector({
             AccountBalanceCreateRepository: BalanceCreateRepository(self.__session)})

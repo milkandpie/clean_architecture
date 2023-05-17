@@ -11,18 +11,16 @@ from src.domains import Account
 
 
 @dataclass
-class AccountRegisterCommand(Command):
-    name: str
-    email: str
+class AccountLoginCommand(Command):
+    username: str
     password: str
     executed_at: datetime
-
     # TODO: Validate command
 
 
-class AccountRegisteringRepository(Repository, ABC):
+class AccountLoginRepository(Repository, ABC):
     @abstractmethod
-    async def create(self, command: AccountRegisterCommand) -> Account:
+    async def create(self, command: AccountLoginCommand) -> Account:
         pass
 
     @abstractmethod
@@ -30,14 +28,13 @@ class AccountRegisteringRepository(Repository, ABC):
         pass
 
 
-class AccountRegisteringService(CommandHandleable):
-    def __init__(self, repository: AccountRegisteringRepository, password_encoded: PasswordEncoded):
+class AccountLoginService(CommandHandleable):
+    def __init__(self, repository: AccountLoginRepository, encoded: PasswordEncoded):
         super().__init__()
+        self.__encoded = encoded
         self.__repository = repository
-        self.__encoded = password_encoded
 
-    async def handle(self, command: AccountRegisterCommand):
+    async def handle(self, command: AccountLoginCommand):
         account = await self.__repository.create(command)
-        account = account.register(command.email, command.name, self.__encoded.encode(command.password),
-                                   command.executed_at)
+        account = account.login(self.__encoded.encode(command.password), command.executed_at)
         await self.__repository.save(account)
