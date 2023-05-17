@@ -1,3 +1,3 @@
 from .admin_request import *
+from .auth_requests import *
 from .common import *
-from .management_request import *

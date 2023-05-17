@@ -8,22 +8,20 @@ from typing import (
 from fastapi import Request, Header, Depends, UploadFile
 from pydantic import BaseModel
 
-from services.integrations.auth import (
+from src.infrastructure import (
     AuthenticationUser,
-    AccountTokenDecodedService,
-    OrganizationDecodedService)
-from .requests import (
+    JWTTokenEncoder)
+from .common import (
     IdRequest,
     IdRequested,
+    FileRequest,
     BasedRequest,
+    FileRequested,
     PayloadRequest,
     RequestGettable,
     PayloadRequested,
     URLParamsRequest,
     URLParamsRequested)
-from .stream_request import (
-    FileRequested,
-    FileRequest)
 
 
 class AuthRequested(ABC):
@@ -34,18 +32,8 @@ class AuthRequested(ABC):
 
 class UserAuthRequest(AuthRequested):
     def __init__(self, authorization=Header(...)):
-        decoded_service = AccountTokenDecodedService(authorization)
-        self.__auth_user = decoded_service.generate()
-
-    def get_auth(self) -> AuthenticationUser:
-        return self.__auth_user
-
-
-class OrganizationAuthRequest(AuthRequested):
-    def __init__(self, authorization=Header(...), x_organization_id=Header(...)):
-        decoded_service = AccountTokenDecodedService(authorization)
-        decoded_service = OrganizationDecodedService(decoded_service, x_organization_id)
-        self.__auth_user = decoded_service.generate()
+        decoded_service = JWTTokenEncoder()
+        self.__auth_user = decoded_service.decode(authorization)
 
     def get_auth(self) -> AuthenticationUser:
         return self.__auth_user

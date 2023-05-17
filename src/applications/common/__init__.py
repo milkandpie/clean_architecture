@@ -1,13 +1,11 @@
+from .authentication import (
+    TokenEncoded,
+    PasswordEncoded)
 from .command import (
     Command,
     CommandHandleable)
-from .repository import (
-    Repository,
-    EventRepository)
 from .mediator import (
     EventsMediator,
     EventHandleable,
     RepositoryInjector)
-from .authentication import (
-    TokenEncoded,
-    PasswordEncoded)
+from .repository import *

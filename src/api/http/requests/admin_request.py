@@ -3,11 +3,10 @@ from typing import List
 from fastapi import Depends, Header
 from pydantic import BaseModel
 
-from services.integrations.auth import (
-    AccountTokenDecodedService,
-    AdminTokenDecodedService,
+from src.infrastructure import (
+    JWTTokenEncoder,
     AuthenticationUser)
-from .common import (
+from .auth_requests import (
     AuthIdPayloadRequest,
     AuthPayloadRequest,
     AuthURLParamsRequest,
@@ -21,9 +20,9 @@ from .common import (
 
 class AdminAuthRequest(AuthRequested):
     def __init__(self, authorization=Header(...)):
-        decoded_service = AccountTokenDecodedService(authorization)
-        decoded_service = AdminTokenDecodedService(decoded_service)
-        self.__auth_user = decoded_service.generate()
+        decoded_service = JWTTokenEncoder()
+        # decoded_service = AdminTokenDecodedService(decoded_service)
+        self.__auth_user = decoded_service.decode(authorization)
 
     def get_auth(self) -> AuthenticationUser:
         return self.__auth_user

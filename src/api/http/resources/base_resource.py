@@ -26,6 +26,8 @@ from services import (
 from .resource import Resource
 from exceptions import ServiceException
 
+from src.applications import ListableParams, GettableParams, CountableParams, QueryRepository
+
 p = inflect.engine()
 
 
@@ -53,12 +55,8 @@ class BaseResource(Resource):
     def create_project_document(self) -> Type[BaseModel] | None:
         return None
 
-    def _create_queryable(self, session: ClientSession | None = None,
-                          request: URLParamsRequest = None,
-                          **kwargs) -> AsyncModelQueryable:
-        return DocumentQueriedService(self.create_document(),
-                                      projection_model=self.create_project_document(),
-                                      session=session)
+    def _create_queryable(self, **kwargs) -> QueryRepository:
+        pass
 
     def _create_creatable(self, session: ClientSession | None = None,
                           request: BasedPayloadRequest = None,
@@ -76,20 +74,21 @@ class BaseResource(Resource):
         return DocumentDeletableService(self.create_document(), session=session)
 
     async def get(self, request: URLParamsRequest = Depends(URLParamsRequest)):
-        service = self._create_queryable(request=request)
+        repository = self._create_queryable(request=request)
         model_id = request.get_id()
 
         if model_id:
-            model = await service.get(model_id)
+            model = await repository.get(GettableParams(model_id))
             if not model:
                 raise HTTPException(404, {'message': 'Not found'})
 
             return model.dict()
 
-        total = await service.count(request.get_filters(),
-                                    q=request.get_query())
+        total = await repository.count(CountableParams(request.get_query(),
+                                                       request.get_filters()))
 
-        models = await service.list(request.get_filters(),
+        models = await repository.list(ListableParams(request.get_query(), ),
+            request.get_filters(),
                                     q=request.get_query(),
                                     sorts=request.get_sort(),
                                     limit=request.get_limit(),
