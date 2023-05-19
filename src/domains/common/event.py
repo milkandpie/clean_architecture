@@ -14,8 +14,12 @@ class EventId(ValueObject):
         return self.__id
 
 
-@dataclass
 class Event(ABC):
+    pass
+
+
+@dataclass
+class BasedEvent(Event):
     event_id: EventId
     aggregate_name: str
     aggregate_id: EntityId
@@ -31,8 +35,10 @@ class Event(ABC):
     def create_event_name(self) -> str:
         return ''.join('.%s' % c if c.isupper() else c
                        for c in self.__class__.__name__).strip('.').lower()
+
+
 @dataclass
-class IntegrationEvent(Event):
+class IntegrationEvent(BasedEvent):
     event_name: str
     key: str = None
     payload: dict = field(default_factory=lambda: {})
@@ -86,7 +92,7 @@ class DelayedEventHandler(DelayedEventHandled):
         return self.__events
 
 
-class DomainEvent(Event):
+class DomainEvent(BasedEvent):
     def to_integration(self, event_name: str = None) -> IntegrationEvent:
         payload = self.to_dict()
         event_name = event_name or payload['event_name']

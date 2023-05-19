@@ -31,10 +31,11 @@ class AccountRegisteringRepository(Repository, ABC):
 
 
 class AccountRegisteringService(CommandHandleable):
-    def __init__(self, repository: AccountRegisteringRepository, password_encoded: PasswordEncoded):
+    def __init__(self, repository: AccountRegisteringRepository = None,
+                 password_encoded: PasswordEncoded = None):
         super().__init__()
-        self.__repository = repository
-        self.__encoded = password_encoded
+        self.__repository = repository or self._injector.get_concreate(PasswordEncoded)
+        self.__encoded = password_encoded or self._injector.get_concreate(AccountRegisteringRepository)
 
     async def handle(self, command: AccountRegisterCommand):
         account = await self.__repository.create(command)

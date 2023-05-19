@@ -1,5 +1,5 @@
 from src.applications import (
-    based_mediator,
+    MediatorGetter,
     AccountRegisterCommand,
     AccountRegisteringRepository,
     AccountBalanceCreateRepository)
@@ -25,12 +25,14 @@ class InMemoryAccountRegisteringRepository(AccountRegisteringRepository):
         self.__session.set(f'account:{account.get_email()}', account.get_name())
         self.__session.set(f'password:{account.get_email()}', account.get_encoded_password())
 
-        injector = InMemoryRepositoryInjector({
-            AccountBalanceCreateRepository: BalanceCreateRepository(self.__session)})
-        based_mediator.add_repository_injector(injector)
+        mediator = (MediatorGetter.
+                    get_mediator('event',
+                                 injector=InMemoryRepositoryInjector({
+                                     AccountBalanceCreateRepository: BalanceCreateRepository(self.__session)
+                                 })))
 
         for event in account.get_events():
-            await based_mediator.handle(event)
+            await mediator.handle(event)
 
         self.__session.add_delayed_events([event.to_dict() for event in account.get_delayed_events()])
         self.__session.add_integrate_events([event.to_dict() for event in account.get_integration_events()])

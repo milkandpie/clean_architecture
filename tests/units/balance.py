@@ -30,7 +30,7 @@ async def test_decreasing_failed():
     db = {}
     session = InMemorySession(db)
     repository = InMemoryBalanceDecreasingRepository(session)
-    command_handler = BalanceDecreasingService(repository)
+    command_handler = BalanceDecreasingService(repository=repository)
 
     command = BalanceDecreasingCommand('lord_viper@mail.com',
                                        1000,
@@ -49,7 +49,7 @@ async def test_decreasing():
     db = {'balance:lord_viper@mail.com': 15000}
     session = InMemorySession(db)
     repository = InMemoryBalanceDecreasingRepository(session)
-    command_handler = BalanceDecreasingService(repository)
+    command_handler = BalanceDecreasingService(repository=repository)
 
     command = BalanceDecreasingCommand('lord_viper@mail.com',
                                        1000,
@@ -66,7 +66,7 @@ async def test_increasing():
     db = {}
     session = InMemorySession(db)
     repository = InMemoryBalanceTopUpRepository(session)
-    command_handler = BalanceTopUpService(repository)
+    command_handler = BalanceTopUpService(repository=repository)
 
     command = BalanceTopUpCommand('lord_viper@mail.com',
                                   1000,

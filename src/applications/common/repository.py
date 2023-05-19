@@ -29,10 +29,10 @@ class EventRepository(Repository, ABC):
 @dataclass
 class ListableParams:
     q: str
-    page: int
     sort: str
     order: str
     limit: int
+    offset: int
     filters: dict
 
 

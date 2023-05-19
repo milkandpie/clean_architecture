@@ -1,14 +1,25 @@
 from abc import ABC, abstractmethod
 from typing import List, Type, Dict
 
-from src.applications.common import Repository
 from src.domains import Event
 
 
 class RepositoryInjector(ABC):
     @abstractmethod
-    def get_concreate(self, repository_type: Type[Repository]):
+    def get_concreate(self, repository_type):
         pass
+
+
+class InMemoryRepositoryInjector(RepositoryInjector):
+    def __init__(self, pairs: Dict = None):
+        self.__repository_concreate_pairs = pairs or {}
+
+    def get_concreate(self, repository_type):
+        concreate = self.__repository_concreate_pairs.get(repository_type)
+        if not concreate:
+            raise Exception('Not registered abstract repository')
+
+        return concreate
 
 
 class EventHandleable(ABC):

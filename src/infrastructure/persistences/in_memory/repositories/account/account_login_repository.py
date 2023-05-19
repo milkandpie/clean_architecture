@@ -1,5 +1,5 @@
 from src.applications import (
-    based_mediator,
+    MediatorGetter,
     AccountLoginCommand,
     AccountLoginRepository)
 from src.domains import Account, EntityId
@@ -24,11 +24,10 @@ class InMemoryAccountLoggingInRepository(AccountLoginRepository):
                        _id=EntityId(command.username))
 
     async def save(self, account: Account):
-        injector = InMemoryRepositoryInjector()
-        based_mediator.add_repository_injector(injector)
+        mediator = MediatorGetter.get_mediator('event', injector=InMemoryRepositoryInjector())
 
         for event in account.get_events():
-            await based_mediator.handle(event)
+            await mediator.handle(event)
 
         self.__session.add_delayed_events([event.to_dict() for event in account.get_delayed_events()])
         self.__session.add_integrate_events([event.to_dict() for event in account.get_integration_events()])

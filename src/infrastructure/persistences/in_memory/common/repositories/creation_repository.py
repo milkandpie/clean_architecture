@@ -1,5 +1,5 @@
 from src.applications import (
-    based_mediator,
+    MediatorGetter,
     AccountBalanceCreateRepository)
 from src.domains import Balance, EntityId, AccountRegistered
 
@@ -25,8 +25,9 @@ class BalanceCreateRepository(AccountBalanceCreateRepository):
         self.__session.set(f'balance_adjustment:{balance_account_id}:balance_adjustment_count',
                            balance.get_balance_adjustment_number())
 
+        mediator = MediatorGetter.get_mediator('event')
         for event in balance.get_events():
-            based_mediator.handle(event)
+            await mediator.handle(event)
 
         self.__session.add_delayed_events([event.to_dict() for event in balance.get_delayed_events()])
         self.__session.add_integrate_events([event.to_dict() for event in balance.get_integration_events()])

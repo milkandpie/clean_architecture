@@ -49,12 +49,6 @@ class BaseResource(Resource):
         self.router.add_api_route(f'{path}/{model_id}', self.patch, methods=['PATCH'], status_code=200)
         self.router.add_api_route(f'{path}/{model_id}', self.delete, methods=['DELETE'], status_code=204)
 
-    def create_document(self) -> Type[Document]:
-        pass
-
-    def create_project_document(self) -> Type[BaseModel] | None:
-        return None
-
     def _create_queryable(self, **kwargs) -> QueryRepository:
         pass
 
@@ -87,12 +81,13 @@ class BaseResource(Resource):
         total = await repository.count(CountableParams(request.get_query(),
                                                        request.get_filters()))
 
-        models = await repository.list(ListableParams(request.get_query(), ),
-            request.get_filters(),
-                                    q=request.get_query(),
-                                    sorts=request.get_sort(),
-                                    limit=request.get_limit(),
-                                    offset=request.get_offset())
+        sort, order = request.get_sort()
+        models = await repository.list(ListableParams(request.get_query(),
+                                                      sort,
+                                                      order,
+                                                      request.get_limit(),
+                                                      request.get_offset(),
+                                                      request.get_filters()))
 
         return {'items': models,
                 'meta': {'total': total,

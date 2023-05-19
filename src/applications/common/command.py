@@ -3,17 +3,20 @@ from dataclasses import dataclass
 from typing import List
 
 from src.domains import (
+    Event,
     DelayedEvent, DelayedEventHandled, DelayedEventHandler,
     IntegrationEvent, IntegrationEventHandled, IntegrationEventHandler)
+from .mediator import EventHandleable
 
 
 @dataclass
-class Command(ABC):
+class Command(Event):
     pass
 
 
-class CommandHandleable(IntegrationEventHandled, DelayedEventHandled, ABC):
+class CommandHandleable(IntegrationEventHandled, DelayedEventHandled, EventHandleable, ABC):
     def __init__(self):
+        super().__init__()
         self.__delayed_handler = DelayedEventHandler()
         self.__integration_handler = IntegrationEventHandler()
 

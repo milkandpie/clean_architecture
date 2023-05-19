@@ -21,7 +21,7 @@ async def test_create_account():
     db = {}
     session = InMemorySession(db)
     repository = InMemoryAccountRegisteringRepository(session)
-    command_handler = AccountRegisteringService(repository, MD5PasswordEncoder())
+    command_handler = AccountRegisteringService(repository=repository, password_encoded=MD5PasswordEncoder())
     command = AccountRegisterCommand('Oberyn Nymeros Martell',
                                      'lord_viper@mail.com',
                                      '12345',
@@ -37,7 +37,7 @@ async def test_login():
     db = {}
     session = InMemorySession(db)
     repository = InMemoryAccountRegisteringRepository(session)
-    command_handler = AccountRegisteringService(repository, MD5PasswordEncoder())
+    command_handler = AccountRegisteringService(repository=repository, password_encoded=MD5PasswordEncoder())
     command = AccountRegisterCommand('Oberyn Nymeros Martell',
                                      'lord_viper@mail.com',
                                      '12345',
@@ -49,7 +49,7 @@ async def test_login():
                                         '12345',
                                         datetime.utcnow())
     login_repository = InMemoryAccountLoggingInRepository(session)
-    command_handler = AccountLoginService(login_repository, MD5PasswordEncoder())
+    command_handler = AccountLoginService(repository=login_repository, encoded=MD5PasswordEncoder())
     await command_handler.handle(login_command)
     assert 1
 
@@ -59,7 +59,7 @@ async def test_top_up_created_account():
     db = {}
     session = InMemorySession(db)
     repository = InMemoryAccountRegisteringRepository(session)
-    command_handler = AccountRegisteringService(repository, MD5PasswordEncoder())
+    command_handler = AccountRegisteringService(repository=repository, password_encoded=MD5PasswordEncoder())
     command = AccountRegisterCommand('Oberyn Nymeros Martell',
                                      'lord_viper@mail.com',
                                      '12345',
@@ -68,7 +68,7 @@ async def test_top_up_created_account():
     await command_handler.handle(command)
 
     top_up_repository = InMemoryBalanceTopUpRepository(session)
-    top_up_command_handler = BalanceTopUpService(top_up_repository)
+    top_up_command_handler = BalanceTopUpService(repository=top_up_repository)
 
     top_up_command = BalanceTopUpCommand('lord_viper@mail.com',
                                          1000,

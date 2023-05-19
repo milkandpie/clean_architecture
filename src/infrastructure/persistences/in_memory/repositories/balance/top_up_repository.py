@@ -1,7 +1,7 @@
 from src.applications import (
     BalanceTopUpRepository,
     BalanceTopUpCommand,
-    based_mediator)
+    MediatorGetter)
 from src.domains import Balance, EntityId
 from src.infrastructure.persistences.in_memory.session import InMemorySession
 
@@ -29,8 +29,9 @@ class InMemoryBalanceTopUpRepository(BalanceTopUpRepository):
             self.__session.set(f'balance_adjustment:{balance.get_account_id()}:{balance_adjustment.get_number()}',
                                balance_adjustment.to_dict())
 
+        mediator = MediatorGetter.get_mediator('event')
         for event in balance.get_events():
-            await based_mediator.handle(event)
+            await mediator.handle(event)
 
         self.__session.add_delayed_events([event.to_dict() for event in balance.get_delayed_events()])
         self.__session.add_integrate_events([event.to_dict() for event in balance.get_integration_events()])

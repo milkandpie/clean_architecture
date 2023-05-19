@@ -34,9 +34,9 @@ class BalanceDecreasingRepository(Repository, ABC):
 
 
 class BalanceDecreasingService(CommandHandleable):
-    def __init__(self, repository: BalanceDecreasingRepository):
+    def __init__(self, repository: BalanceDecreasingRepository = None):
         super().__init__()
-        self.__repository = repository
+        self.__repository = repository or self._injector.get_concreate(BalanceDecreasingRepository)
 
     async def handle(self, command: BalanceDecreasingCommand):
         balance = await self.__repository.create(command)
