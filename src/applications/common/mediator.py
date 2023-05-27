@@ -1,4 +1,6 @@
+import inspect
 from abc import ABC, abstractmethod
+from copy import deepcopy
 from typing import List, Type, Dict
 
 from src.domains import Event
@@ -10,28 +12,25 @@ class RepositoryInjector(ABC):
         pass
 
 
-class InMemoryRepositoryInjector(RepositoryInjector):
+class BasedRepositoryInjector(RepositoryInjector):
     def __init__(self, pairs: Dict = None):
         self.__repository_concreate_pairs = pairs or {}
 
     def get_concreate(self, repository_type):
         concreate = self.__repository_concreate_pairs.get(repository_type)
-        if not concreate:
-            raise Exception('Not registered abstract repository')
+        if concreate is None:
+            raise Exception(f'Not registered abstract repository: {repository_type}')
 
         return concreate
 
+    def clone(self) -> 'BasedRepositoryInjector':
+        return deepcopy(self)
+
 
 class EventHandleable(ABC):
-    def __init__(self, injector: RepositoryInjector = None):
-        self._injector = injector
-
     @abstractmethod
     async def handle(self, event: Event):
         pass
-
-    def set_injector(self, injector: RepositoryInjector):
-        self._injector = injector
 
 
 class EventsMediator:
@@ -54,8 +53,39 @@ class EventsMediator:
     async def handle(self, event: Event):
         handlers = self.__event_handlers_pairs.get(type(event))
         for handler_cls in handlers:
-            handler = handler_cls(injector=self.__repository_injector)
+            handler = self.__init_params(handler_cls, injector_query=False)
             await handler.handle(event)
 
     def add_repository_injector(self, injector: RepositoryInjector):
         self.__repository_injector = injector
+
+    def __init_params(self, type_hint, injector_query: bool = True):
+        """
+
+        :param type_hint: Object to get instance
+        :param injector_query: If True, trigger query concreate instance on injector
+        :return: Fully initialized instance
+        """
+
+        _initialing_cls = type_hint
+        if injector_query:
+            _initialing_cls = self.__repository_injector.get_concreate(type_hint)
+
+        if not inspect.isclass(_initialing_cls):
+            return _initialing_cls
+
+        try:
+            type_hints = _initialing_cls.__init__.__annotations__
+            if not type_hints:
+                return _initialing_cls()
+
+        except AttributeError:
+            # For class without specific __init__ method
+            return _initialing_cls()
+
+        initialing_params = {}
+        for parameter_name, parameter_hint in type_hints.items():
+            _parameter_instance = self.__init_params(parameter_hint)
+            initialing_params[parameter_name] = _parameter_instance
+
+        return _initialing_cls(**initialing_params)

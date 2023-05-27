@@ -1,12 +1,11 @@
 from src.applications import (
     MediatorGetter,
     AccountRegisterCommand,
+    BasedRepositoryInjector,
     AccountRegisteringRepository,
     AccountBalanceCreateRepository)
 from src.domains import Account, EntityId
-from src.infrastructure.persistences.in_memory.common import (
-    InMemoryRepositoryInjector,
-    BalanceCreateRepository)
+from src.infrastructure.persistences.in_memory.common import BalanceCreateRepository
 from ...session import InMemorySession
 
 
@@ -27,7 +26,7 @@ class InMemoryAccountRegisteringRepository(AccountRegisteringRepository):
 
         mediator = (MediatorGetter.
                     get_mediator('event',
-                                 injector=InMemoryRepositoryInjector({
+                                 injector=BasedRepositoryInjector({
                                      AccountBalanceCreateRepository: BalanceCreateRepository(self.__session)
                                  })))
 

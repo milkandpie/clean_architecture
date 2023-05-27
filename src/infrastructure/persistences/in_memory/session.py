@@ -1,8 +1,12 @@
 from typing import List
 
 
+class InMemoryDataBase(dict):
+    pass
+
+
 class InMemorySession:
-    def __init__(self, db: dict):
+    def __init__(self, db: InMemoryDataBase):
         self.__db = db
 
     def get(self, key: str):
