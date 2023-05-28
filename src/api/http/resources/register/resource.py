@@ -13,7 +13,7 @@ class RegisterResource(Resource):
 
     @staticmethod
     async def top_up(request: RegisterRequest = Depends(RegisterRequest)):
-        mediator = MediatorGetter.get_mediator('command', injector=in_memory_injector.clone())
+        mediator = MediatorGetter.get_mediator('command', injector=in_memory_injector)
         payload = await request.get_payload()
         payload = payload.dict()
         await mediator.handle(AccountRegisterCommand(payload['name'],

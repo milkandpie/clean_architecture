@@ -1,4 +1,6 @@
-from fastapi import Depends
+from datetime import datetime
+
+from fastapi import Depends, Response
 
 from src.api.http.common import Resource
 from src.applications import MediatorGetter, AccountLoginCommand
@@ -12,8 +14,10 @@ class LoginResource(Resource):
         self.router.add_api_route('/login', self.top_up, methods=['POST'], status_code=200)
 
     @staticmethod
-    async def top_up(request: LoginRequest = Depends(LoginRequest)):
+    async def top_up(response: Response, request: LoginRequest = Depends(LoginRequest)):
         mediator = MediatorGetter.get_mediator('command', injector=in_memory_injector)
         payload = await request.get_payload()
-        await mediator.handle(AccountLoginCommand(payload.email, payload.password))
+        payload = payload.dict()
+        token = await mediator.handle(AccountLoginCommand(payload['email'], payload['password'], datetime.utcnow()))
+        response.headers['X-Token'] = token
         return {'message': 'Login successfully'}

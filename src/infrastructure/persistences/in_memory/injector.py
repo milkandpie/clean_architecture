@@ -5,7 +5,7 @@ from src.applications import (
     BalanceDecreasingRepository,
     BalanceTopUpRepository,
     PasswordEncoded,
-    TokenEncoded)
+    TokenUtils)
 from .repositories import (
     InMemoryAccountRegisteringRepository,
     InMemoryAccountLoggingInRepository,
@@ -20,14 +20,14 @@ from .session import (
 
 in_memory_injector = BasedRepositoryInjector(
     {
-        InMemoryDataBase: {},
+        InMemoryDataBase: InMemoryDataBase(),
         InMemorySession: InMemorySession,
         AccountRegisteringRepository: InMemoryAccountRegisteringRepository,
         BalanceDecreasingRepository: InMemoryBalanceDecreasingRepository,
         AccountLoginRepository: InMemoryAccountLoggingInRepository,
         BalanceTopUpRepository: InMemoryBalanceTopUpRepository,
         PasswordEncoded: MD5PasswordEncoder,
-        TokenEncoded: JWTTokenEncoder
+        TokenUtils: JWTTokenEncoder
 
     }
 )

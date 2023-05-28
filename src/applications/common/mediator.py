@@ -4,6 +4,9 @@ from copy import deepcopy
 from typing import List, Type, Dict
 
 from src.domains import Event
+from logging import getLogger
+
+log = getLogger(__name__)
 
 
 class RepositoryInjector(ABC):
@@ -19,7 +22,7 @@ class BasedRepositoryInjector(RepositoryInjector):
     def get_concreate(self, repository_type):
         concreate = self.__repository_concreate_pairs.get(repository_type)
         if concreate is None:
-            raise Exception(f'Not registered abstract repository: {repository_type}')
+            log.warning('Not registered abstract repository: %s', repository_type)
 
         return concreate
 
