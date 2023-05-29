@@ -18,6 +18,6 @@ class LoginResource(Resource):
         mediator = MediatorGetter.get_mediator('command', injector=in_memory_injector)
         payload = await request.get_payload()
         payload = payload.dict()
-        token = await mediator.handle(AccountLoginCommand(payload['email'], payload['password'], datetime.utcnow()))
-        response.headers['X-Token'] = token
+        responses = await mediator.handle(AccountLoginCommand(payload['email'], payload['password'], datetime.utcnow()))
+        response.headers['X-Token'] = responses[0]
         return {'message': 'Login successfully'}

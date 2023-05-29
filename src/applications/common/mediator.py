@@ -55,9 +55,12 @@ class EventsMediator:
 
     async def handle(self, event: Event):
         handlers = self.__event_handlers_pairs.get(type(event))
+        responses = []
         for handler_cls in handlers:
             handler = self.__init_params(handler_cls, injector_query=False)
-            await handler.handle(event)
+            responses.append(await handler.handle(event))
+
+        return responses
 
     def add_repository_injector(self, injector: RepositoryInjector):
         self.__repository_injector = injector

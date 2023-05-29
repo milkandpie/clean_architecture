@@ -11,6 +11,7 @@ from src.applications import (
 from src.infrastructure import (
     InMemoryBalanceDecreasingRepository,
     InMemoryBalanceTopUpRepository,
+    InMemoryDataBase,
     InMemorySession)
 
 
@@ -27,8 +28,7 @@ def test_multiple_charges(balance, top_up_amounts, expected_amount):
 
 @pytest.mark.asyncio
 async def test_decreasing_failed():
-    db = {}
-    session = InMemorySession(db)
+    session = InMemorySession(InMemoryDataBase())
     repository = InMemoryBalanceDecreasingRepository(session)
     command_handler = BalanceDecreasingService(repository=repository)
 
@@ -46,8 +46,7 @@ async def test_decreasing_failed():
 
 @pytest.mark.asyncio
 async def test_decreasing():
-    db = {'balance:lord_viper@mail.com': 15000}
-    session = InMemorySession(db)
+    session = InMemorySession(InMemoryDataBase(**{'balance:lord_viper@mail.com': 15000}))
     repository = InMemoryBalanceDecreasingRepository(session)
     command_handler = BalanceDecreasingService(repository=repository)
 
@@ -63,8 +62,7 @@ async def test_decreasing():
 
 @pytest.mark.asyncio
 async def test_increasing():
-    db = {}
-    session = InMemorySession(db)
+    session = InMemorySession(InMemoryDataBase())
     repository = InMemoryBalanceTopUpRepository(session)
     command_handler = BalanceTopUpService(repository=repository)
 
