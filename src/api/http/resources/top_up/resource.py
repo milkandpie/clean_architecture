@@ -15,4 +15,4 @@ class BaseResource(Resource):
         email = request.get_auth().email
         payload = await request.get_payload()
         await mediator.handle(BalanceTopUpCommand(email, **payload.dict()))
-        return
+        return {}

@@ -1,25 +1,21 @@
-from typing import List, Type
+from typing import List
 
 import inflect
-from beanie import Document
 from fastapi import (
     Depends,
     HTTPException)
-from pydantic import BaseModel
 from pymongo.client_session import ClientSession
 
-from src.api.http.requests import (
+from src.api.http.common.requests import (
     BasedPayloadRequest,
     IdPayloadRequest,
     URLParamsRequest)
 from common import MongoClientFactory
 from config import GENERAL_MONGO_CONFIG
 from services import (
-    DocumentQueriedService,
     DocumentCreatableService,
     DocumentUpdatableService,
     DocumentDeletableService,
-    AsyncModelQueryable,
     AsyncModelCreatable,
     AsyncModelUpdatable,
     AsyncModelDeletable)

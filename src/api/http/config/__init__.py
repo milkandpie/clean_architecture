@@ -1,0 +1,2 @@
+CORS_ORIGINS = []
+API_DEBUG = False

@@ -2,12 +2,34 @@ from abc import ABC, abstractmethod
 from typing import List, Type, Dict
 
 from src.domains import Event
+from logging import getLogger
+
+log = getLogger(__name__)
 
 
 class RepositoryInjector(ABC):
     @abstractmethod
     def get_concreate(self, repository_type):
         pass
+
+
+class BasedRepositoryInjector(RepositoryInjector):
+    def __init__(self, pairs: Dict = None):
+        self.__repository_concreate_pairs = pairs or {}
+
+    def get_concreate(self, repository_type):
+        concreate = self.__repository_concreate_pairs.get(repository_type)
+        if concreate is None:
+            log.warning('Not registered abstract repository: %s', repository_type)
+
+        return concreate
+
+    def set_concreate(self, pairs: dict) -> 'BasedRepositoryInjector':
+        self.__repository_concreate_pairs.update(pairs)
+        return self
+
+    def clone(self) -> 'BasedRepositoryInjector':
+        return deepcopy(self)
 
 
 class InMemoryRepositoryInjector(RepositoryInjector):

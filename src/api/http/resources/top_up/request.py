@@ -4,7 +4,7 @@ from typing import List
 from fastapi import Depends
 from pydantic import BaseModel
 
-from src.api.http.requests import AuthPayloadRequest, UserAuthRequest
+from src.api.http.common.requests import AuthPayloadRequest, UserAuthRequest
 
 
 class TopUpModel(BaseModel):

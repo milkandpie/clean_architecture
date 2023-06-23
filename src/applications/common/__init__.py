@@ -7,5 +7,7 @@ from .command import (
 from .mediator import (
     EventsMediator,
     EventHandleable,
-    RepositoryInjector)
+    RepositoryInjector,
+    BasedRepositoryInjector
+)
 from .repository import *

@@ -9,5 +9,5 @@ from .event import (
     DomainEvent,
     DelayedEvent, DelayedEventHandled, DelayedEventHandler,
     IntegrationEvent, IntegrationEventHandled, IntegrationEventHandler)
-from .exception import DomainException
+from .exception import DomainException, IncorrectDomainValuedException
 from .executable import Executable
