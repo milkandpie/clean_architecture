@@ -23,7 +23,3 @@ kafka-python = "2.0.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.dependencies]
-# Compatible Python versions
-python = "^3.10"
