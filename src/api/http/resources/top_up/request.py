@@ -4,7 +4,7 @@ from typing import List
 from fastapi import Depends
 from pydantic import BaseModel
 
-from src.api.http.common.requests import AuthPayloadRequest, UserAuthRequest
+from src.api.http.common import AuthPayloadRequest, UserAuthRequest
 
 
 class TopUpModel(BaseModel):
@@ -15,5 +15,5 @@ class TopUpModel(BaseModel):
 
 class TopUpRequest(AuthPayloadRequest):
     def __init__(self, payload: TopUpModel | List[TopUpModel],
-                 auth: Depends(UserAuthRequest)):
+                 auth=Depends(UserAuthRequest)):
         super().__init__(payload, auth)

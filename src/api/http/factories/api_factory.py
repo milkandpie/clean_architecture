@@ -5,15 +5,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from apps.http.exceptions import MethodNotAllowException
-from apps.http.resources import Resource
-from exceptions import ServiceException
-from services.exceptions import (
-    UniqueException,
-    NotFoundException,
-    UnavailableException,
-    UnauthorizedException)
-from config import CORS_ORIGINS
+from src.api.http.common import Resource
+from src.api.http.config import CORS_ORIGINS
+from src.domains import DomainException
 
 
 async def method_not_allow_handler(_, __):
@@ -42,8 +36,8 @@ async def unavailable_error_handler(_, exception):
     return JSONResponse({'message': message}, status_code=503)
 
 
-async def default_error_handler(_, exception: ServiceException):
-    return JSONResponse({'message': str(exception)}, status_code=exception.get_code())
+async def default_error_handler(_, exception: DomainException):
+    return JSONResponse({'message': str(exception)}, status_code=500)
 
 
 class APICreatable(ABC):
@@ -72,13 +66,6 @@ class APIFactory(APICreatable):
 
         for resource in self.__routes:
             app.include_router(resource.router)
-
-        app.add_exception_handler(MethodNotAllowException, method_not_allow_handler)
-        app.add_exception_handler(UnauthorizedException, unauthorized_error_handler)
-        app.add_exception_handler(UnavailableException, unavailable_error_handler)
-        app.add_exception_handler(NotFoundException, not_found_error_handler)
-        app.add_exception_handler(ServiceException, default_error_handler)
-        app.add_exception_handler(UniqueException, unique_error_handler)
 
         app.add_middleware(
             CORSMiddleware,

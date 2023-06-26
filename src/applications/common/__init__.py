@@ -1,5 +1,7 @@
 from .authentication import (
-    TokenEncoded,
+    TokenUtils,
+    AuthenticationUser,
+    EncodeData,
     PasswordEncoded)
 from .command import (
     Command,
@@ -8,6 +10,6 @@ from .mediator import (
     EventsMediator,
     EventHandleable,
     RepositoryInjector,
-    BasedRepositoryInjector
-)
+    BasedRepositoryInjector)
 from .repository import *
+from .singleton import Singleton

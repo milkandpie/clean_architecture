@@ -12,12 +12,16 @@ class InMemoryBalanceDecreasingRepository(BalanceDecreasingRepository):
         self.__session = session
 
     async def create(self, command: BalanceDecreasingCommand) -> Balance:
+        # account_existed = self.__session.get(f'account:{command.email}')
+        # if not account_existed:
+        #     raise Exception(f'Invalid account id: {command.email}')
+
         current_amount = self.__session.get(f'balance:{command.email}')
         if current_amount is None:
-            return Balance(0, 0, EntityId(command.email))
+            return Balance(0, 0, EntityId(command.email), _id=EntityId(command.email))
 
         current_ba_number = self.__session.get(f'balance_adjustment:{command.email}:balance_adjustment_count') or 0
-        return Balance(current_amount, current_ba_number, EntityId(command.email))
+        return Balance(current_amount, current_ba_number, EntityId(command.email), _id=EntityId(command.email))
 
     async def rollback(self, balance: Balance) -> Balance:
         events = [event.to_dict() for event in balance.get_events()]

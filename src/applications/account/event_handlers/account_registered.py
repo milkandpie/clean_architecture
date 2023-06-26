@@ -11,8 +11,10 @@ class AccountBalanceCreateRepository(EventRepository):
 
 
 class AccountBalanceCreateHandler(EventHandleable):
+    def __init__(self, repository: AccountBalanceCreateRepository):
+        self.__repository = repository
+
     async def handle(self, event: AccountRegistered):
-        repository = self._injector.get_concreate(AccountBalanceCreateRepository)
-        balance = await repository.create(event)
+        balance = await self.__repository.create(event)
         balance.create(event.aggregate_id)
-        return await repository.save(balance)
+        return await self.__repository.save(balance)

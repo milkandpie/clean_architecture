@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+
 from abc import (ABC, abstractmethod)
 from typing import List, Callable
 

@@ -10,16 +10,15 @@ from src.applications import (
     BalanceTopUpService,
     BalanceTopUpCommand)
 from src.infrastructure import (
-    MD5PasswordEncoder,
+    MD5PasswordEncoder, JWTTokenEncoder,
     InMemoryAccountLoggingInRepository,
     InMemoryAccountRegisteringRepository,
-    InMemorySession, InMemoryBalanceTopUpRepository)
+    InMemorySession, InMemoryDataBase, InMemoryBalanceTopUpRepository)
 
 
 @pytest.mark.asyncio
 async def test_create_account():
-    db = {}
-    session = InMemorySession(db)
+    session = InMemorySession(InMemoryDataBase())
     repository = InMemoryAccountRegisteringRepository(session)
     command_handler = AccountRegisteringService(repository=repository, password_encoded=MD5PasswordEncoder())
     command = AccountRegisterCommand('Oberyn Nymeros Martell',
@@ -34,8 +33,7 @@ async def test_create_account():
 
 @pytest.mark.asyncio
 async def test_login():
-    db = {}
-    session = InMemorySession(db)
+    session = InMemorySession(InMemoryDataBase())
     repository = InMemoryAccountRegisteringRepository(session)
     command_handler = AccountRegisteringService(repository=repository, password_encoded=MD5PasswordEncoder())
     command = AccountRegisterCommand('Oberyn Nymeros Martell',
@@ -49,15 +47,15 @@ async def test_login():
                                         '12345',
                                         datetime.utcnow())
     login_repository = InMemoryAccountLoggingInRepository(session)
-    command_handler = AccountLoginService(repository=login_repository, encoded=MD5PasswordEncoder())
+    command_handler = AccountLoginService(repository=login_repository, encoded=MD5PasswordEncoder(),
+                                          token_utils=JWTTokenEncoder())
     await command_handler.handle(login_command)
     assert 1
 
 
 @pytest.mark.asyncio
 async def test_top_up_created_account():
-    db = {}
-    session = InMemorySession(db)
+    session = InMemorySession(InMemoryDataBase())
     repository = InMemoryAccountRegisteringRepository(session)
     command_handler = AccountRegisteringService(repository=repository, password_encoded=MD5PasswordEncoder())
     command = AccountRegisterCommand('Oberyn Nymeros Martell',

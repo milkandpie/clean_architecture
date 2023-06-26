@@ -19,7 +19,7 @@ from services import (
     AsyncModelCreatable,
     AsyncModelUpdatable,
     AsyncModelDeletable)
-from .resource import Resource
+from src.api.http.common.resource import Resource
 from exceptions import ServiceException
 
 from src.applications import ListableParams, GettableParams, CountableParams, QueryRepository
