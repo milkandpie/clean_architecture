@@ -12,6 +12,14 @@ class Entity(Comparable):
         self.__id: EntityId = _id or EntityId()
         self.__events: List[Event] = []
 
+    @property
+    def id(self):
+        return self.__id
+
+    @property
+    def events(self):
+        return self.__events
+
     def get_comparable(self):
         return self.__id.get_comparable()
 

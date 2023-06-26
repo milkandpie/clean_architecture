@@ -23,3 +23,7 @@ class EntityId(ValueObject):
 
     def get_comparable(self):
         return self.__id
+
+    @staticmethod
+    def create() -> ValueObject:
+        return EntityId(str(uuid.uuid4()))
