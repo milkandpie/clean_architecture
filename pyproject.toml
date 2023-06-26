@@ -1,10 +1,13 @@
 [tool.poetry]
-name = "ca"
+name = "src"
 version = "0.1.0"
 description = ""
 authors = ["dungpq <phanquangdng@gmail.vn>"]
 readme = "README.md"
-
+packages = [
+    { include = "src" },
+    { include = "src/**/*.py" },
+]
 repository = "https://github.com/milkandpie/clean_architecture"
 
 [tool.poetry.dependencies]
