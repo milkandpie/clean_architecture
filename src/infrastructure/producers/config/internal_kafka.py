@@ -3,7 +3,7 @@ from logging import getLogger
 
 from decouple import config
 
-from .billing_kafka import KafkaSSLConfig, KafkaProducerConfig
+from .based_kafka import KafkaSSLConfig, KafkaProducerConfig
 
 log = getLogger(__name__)
 

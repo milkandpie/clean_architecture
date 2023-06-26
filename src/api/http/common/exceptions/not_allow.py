@@ -1,2 +1,0 @@
-class MethodNotAllowException(Exception):
-    pass

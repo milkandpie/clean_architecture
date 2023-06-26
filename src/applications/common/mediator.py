@@ -34,21 +34,6 @@ class BasedRepositoryInjector(RepositoryInjector):
         return deepcopy(self)
 
 
-class InMemoryRepositoryInjector(RepositoryInjector):
-    def __init__(self, pairs: Dict = None):
-        self.__repository_concreate_pairs = pairs or {}
-
-    def get_concreate(self, repository_type):
-        concreate = self.__repository_concreate_pairs.get(repository_type)
-        if concreate is None:
-            log.warning('Not registered abstract repository: %s', repository_type)
-
-        return concreate
-
-    def clone(self) -> 'BasedRepositoryInjector':
-        return deepcopy(self)
-
-
 class EventHandleable(ABC):
     @abstractmethod
     async def handle(self, event: Event):

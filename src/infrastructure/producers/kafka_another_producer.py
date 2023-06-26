@@ -1,13 +1,13 @@
-from src.applications import BillingProducer, BillingMessage
+from src.applications import AnotherProducer, AnotherMessage
 from ._producer import ConfiguredKafkaProducer, KafkaMessage, ProducerRunner
-from .config import BillingKafkaProducerConfig, BILLING_EVENT_TOPIC
+from .config import AnotherKafkaProducerConfig, EVENT_TOPIC
 
 
-class KafkaBillingProducer(BillingProducer):
+class KafkaAnotherProducer(AnotherProducer):
     def __init__(self):
-        self.__producer = ProducerRunner(ConfiguredKafkaProducer(BILLING_EVENT_TOPIC, BillingKafkaProducerConfig()))
+        self.__producer = ProducerRunner(ConfiguredKafkaProducer(EVENT_TOPIC, AnotherKafkaProducerConfig()))
 
-    def send_message(self, message: BillingMessage):
+    def send_message(self, message: AnotherMessage):
         self.__producer.send_message(KafkaMessage(
             key=message.key,
             payload=message.payload,

@@ -6,28 +6,32 @@ from src.applications import (
     BalanceTopUpRepository,
     PasswordEncoded,
     TokenUtils)
+from src.infrastructure.common import (
+    JWTTokenEncoder,
+    MD5PasswordEncoder)
 from .repositories import (
     InMemoryAccountRegisteringRepository,
     InMemoryAccountLoggingInRepository,
     InMemoryBalanceDecreasingRepository,
     InMemoryBalanceTopUpRepository)
-from src.infrastructure.common import (
-    JWTTokenEncoder,
-    MD5PasswordEncoder)
 from .session import (
     InMemorySession,
     InMemoryDataBase)
 
-in_memory_injector = BasedRepositoryInjector(
-    {
-        InMemoryDataBase: InMemoryDataBase(),
-        InMemorySession: InMemorySession,
-        AccountRegisteringRepository: InMemoryAccountRegisteringRepository,
-        BalanceDecreasingRepository: InMemoryBalanceDecreasingRepository,
-        AccountLoginRepository: InMemoryAccountLoggingInRepository,
-        BalanceTopUpRepository: InMemoryBalanceTopUpRepository,
-        PasswordEncoded: MD5PasswordEncoder,
-        TokenUtils: JWTTokenEncoder
+database = InMemoryDataBase()
 
-    }
-)
+
+class InMemoryInjector(BasedRepositoryInjector):
+    def __init__(self):
+        super().__init__({
+            InMemoryDataBase: database,
+            InMemorySession: InMemorySession,
+            BasedRepositoryInjector: InMemoryInjector,
+            AccountRegisteringRepository: InMemoryAccountRegisteringRepository,
+            BalanceDecreasingRepository: InMemoryBalanceDecreasingRepository,
+            AccountLoginRepository: InMemoryAccountLoggingInRepository,
+            BalanceTopUpRepository: InMemoryBalanceTopUpRepository,
+            PasswordEncoded: MD5PasswordEncoder,
+            TokenUtils: JWTTokenEncoder
+
+        })

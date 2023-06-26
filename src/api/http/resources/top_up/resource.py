@@ -2,7 +2,7 @@ from fastapi import Depends
 
 from src.api.http.common import Resource
 from src.applications import MediatorGetter, BalanceTopUpCommand
-from src.infrastructure import in_memory_injector
+from src.infrastructure import InMemoryInjector
 from .request import TopUpRequest
 
 
@@ -13,7 +13,7 @@ class TopUpResource(Resource):
 
     @staticmethod
     async def top_up(request: TopUpRequest = Depends(TopUpRequest)):
-        mediator = MediatorGetter.get_mediator('command', injector=in_memory_injector)
+        mediator = MediatorGetter.get_mediator('command', injector=InMemoryInjector())
         email = request.get_auth().email
         payload = await request.get_payload()
         await mediator.handle(BalanceTopUpCommand(email, **payload.dict()))

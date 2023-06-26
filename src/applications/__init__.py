@@ -3,6 +3,6 @@ from .balance import *
 from .common import *
 from .event_integrated_handler import (
     Message, Producer,
-    BillingMessage, BillingProducer,
+    AnotherMessage, AnotherProducer,
     InternalMessage, InternalProducer)
 from .mediator import MediatorGetter

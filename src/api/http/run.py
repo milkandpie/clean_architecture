@@ -1,16 +1,19 @@
 import uvicorn
 from fastapi import FastAPI
 
-from src.api.http.config import API_DEBUG
 from src.api.http.common import APIFactory, APICreatable
-from src.infrastructure import init_collections
+from src.api.http.config import API_DEBUG
+from src.api.http.resources import (
+    TopUpResource,
+    RegisterResource,
+    LoginResource)
 
 
 class AuthAPIFactory(APICreatable):
     def __init__(self):
-        self.__factory = APIFactory([],
-                                    name='',
-                                    on_start_up=[init_collections],
+        self.__factory = APIFactory([TopUpResource(), RegisterResource(), LoginResource()],
+                                    name='API',
+                                    on_start_up=[],
                                     debug=API_DEBUG)
 
     def create_app(self) -> FastAPI:

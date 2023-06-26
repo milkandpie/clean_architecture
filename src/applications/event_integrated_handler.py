@@ -32,19 +32,19 @@ class Producer(ABC):
 
 
 @dataclass
-class BillingMessage(Message):
+class AnotherMessage(Message):
     key: str = None
 
     @staticmethod
-    def from_integration(event: IntegrationEvent) -> 'BillingMessage':
-        return BillingMessage(payload=event.payload,
+    def from_integration(event: IntegrationEvent) -> 'AnotherMessage':
+        return AnotherMessage(payload=event.payload,
                               event_type=event.event_name,
                               key=event.key)
 
 
-class BillingProducer(Producer, ABC):
+class AnotherProducer(Producer, ABC):
     @abstractmethod
-    def send_message(self, message: BillingMessage):
+    def send_message(self, message: AnotherMessage):
         pass
 
 
@@ -61,8 +61,8 @@ class EventIntegratedHandler(EventHandleable):
 
 
 class EventBillingIntegratedHandler(EventIntegratedHandler):
-    def __init__(self, producer: BillingProducer):
-        super().__init__(producer, BillingMessage)
+    def __init__(self, producer: AnotherProducer):
+        super().__init__(producer, AnotherMessage)
 
 
 @dataclass()
@@ -81,7 +81,7 @@ class InternalMessage(Message):
 
 class InternalProducer(Producer, ABC):
     @abstractmethod
-    def send_message(self, message: BillingMessage):
+    def send_message(self, message: AnotherMessage):
         pass
 
 

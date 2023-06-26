@@ -1,12 +1,12 @@
 from pymongo.client_session import ClientSession
 
 from src.applications import (
-    BillingProducer,
+    AnotherProducer,
     InternalProducer,
     BasedRepositoryInjector,
 )
 from src.infrastructure.producers import (
-    KafkaBillingProducer,
+    KafkaAnotherProducer,
     KafkaInternalProducer
 )
 
@@ -15,7 +15,7 @@ class MongoRepositoryInjector(BasedRepositoryInjector):
     def __init__(self):
         super().__init__({
             ClientSession: None,
-            BillingProducer: KafkaBillingProducer,
+            AnotherProducer: KafkaAnotherProducer,
             InternalProducer: KafkaInternalProducer,
             BasedRepositoryInjector: MongoRepositoryInjector,
         })
