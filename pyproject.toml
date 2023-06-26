@@ -5,6 +5,8 @@ description = ""
 authors = ["dungpq <phanquangdng@gmail.vn>"]
 readme = "README.md"
 
+repository = "https://github.com/milkandpie/clean_architecture"
+
 [tool.poetry.dependencies]
 python = "^3.10"
 pytest = "^7.3.1"
@@ -21,3 +23,7 @@ kafka-python = "2.0.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.dependencies]
+# Compatible Python versions
+python = "^3.10"
