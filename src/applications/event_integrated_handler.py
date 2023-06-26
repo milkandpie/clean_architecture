@@ -60,7 +60,7 @@ class EventIntegratedHandler(EventHandleable):
         self.__producer.send_message(self.__message_type.from_integration(integration_event))
 
 
-class EventBillingIntegratedHandler(EventIntegratedHandler):
+class EventAnotherIntegratedHandler(EventIntegratedHandler):
     def __init__(self, producer: AnotherProducer):
         super().__init__(producer, AnotherMessage)
 
