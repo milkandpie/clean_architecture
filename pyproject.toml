@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "src"
+name = "clean-architecture"
 version = "0.1.0"
 description = ""
 authors = ["dungpq <phanquangdng@gmail.vn>"]
