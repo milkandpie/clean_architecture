@@ -2,7 +2,7 @@
 name = "clean_architecture"
 version = "0.1.0"
 description = ""
-authors = ["dungpq <dungphanquang@vccorp.vn>"]
+authors = ["dungpq <phanquangdng@gmail.vn>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
