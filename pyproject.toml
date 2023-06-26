@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "clean-architecture"
+name = "clean_architecture"
 version = "0.1.0"
 description = ""
 authors = ["dungpq <phanquangdng@gmail.vn>"]
 packages = [
-    { include = "src" },
-    { include = "src/**/*.py" },
+    { include = "clean_architecture" },
+    { include = "clean_architecture/**/*.py" },
 ]
 repository = "https://github.com/milkandpie/clean_architecture"
 
