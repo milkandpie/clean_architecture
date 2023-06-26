@@ -3,7 +3,6 @@ name = "src"
 version = "0.1.0"
 description = ""
 authors = ["dungpq <phanquangdng@gmail.vn>"]
-readme = "README.md"
 packages = [
     { include = "src" },
     { include = "src/**/*.py" },
