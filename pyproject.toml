@@ -1,13 +1,12 @@
 [tool.poetry]
 name = "clean_architecture"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = ["dungpq <phanquangdng@gmail.vn>"]
 packages = [
     { include = "clean_architecture" },
     { include = "clean_architecture/**/*.py" },
 ]
-repository = "https://github.com/milkandpie/clean_architecture"
 
 [tool.poetry.dependencies]
 python = "^3.10"
