@@ -4,7 +4,7 @@ from asyncio import sleep
 from dataclasses import dataclass
 from datetime import datetime
 from logging import getLogger, INFO, StreamHandler
-from typing import List, Any, Tuple
+from typing import List, Any, Tuple, Type
 
 from pydantic import ValidationError
 from kafka import KafkaConsumer
@@ -19,8 +19,7 @@ from src.domains import (
     Event,
     DomainException,
     IncorrectDomainValuedException)
-from src.applications import MediatorGetter
-from src.infrastructure import MongoRepositoryInjector
+from src.applications import MediatorGetter, BasedRepositoryInjector
 from .dataclass_to_based_model import convert_flat_dataclass_to_pydantic
 
 log = getLogger(__name__)
@@ -52,9 +51,13 @@ class Consumer(ABC):
 
 class BasedConsumerRunner:
     def __init__(self, consumer: Consumer, command_types: dict,
+                 mediator_getter: Type[MediatorGetter],
+                 injector: BasedRepositoryInjector,
                  worker_name: str = None):
         log.info('Running %s consumer', worker_name or 'a long cycle system')
         self.__consumer = consumer
+        self.__injector = injector
+        self.__mediator_getter = mediator_getter
         self.__command_types = self.__make_handlers(command_types)
 
     @staticmethod
@@ -93,7 +96,7 @@ class BasedConsumerRunner:
                     try:
                         based_model = event_data['based_model_type'](**message.payload)
                         command = event_data['command_type'](**based_model.dict())
-                        mediator = MediatorGetter.get_mediator('command', injector=MongoRepositoryInjector())
+                        mediator = self.__mediator_getter.get_mediator('command', injector=self.__injector)
                         await mediator.handle(command)
                         break
 
