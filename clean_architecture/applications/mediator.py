@@ -13,16 +13,19 @@ _command_mediator = EventsMediator(
 
 
 class MediatorGetter:
-    __mediators = {
-        'event': _event_mediator,
-        'command': _command_mediator
-    }
-
     @classmethod
     def get_mediator(cls, ident: str, injector: RepositoryInjector = None) -> EventsMediator:
         try:
-            mediator = deepcopy(cls.__mediators[ident])
+            mediators = cls._create_mediators()
+            mediator = deepcopy(mediators[ident])
             mediator.add_repository_injector(injector)
             return mediator
         except KeyError:
             raise Exception
+
+    @staticmethod
+    def _create_mediators():
+        return {
+            'event': _event_mediator,
+            'command': _command_mediator
+        }
