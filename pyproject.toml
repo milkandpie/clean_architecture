@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "clean_architecture"
-version = "0.1.2"
+version = "0.1.3"
 description = ""
 authors = ["dungpq <phanquangdng@gmail.vn>"]
 packages = [
