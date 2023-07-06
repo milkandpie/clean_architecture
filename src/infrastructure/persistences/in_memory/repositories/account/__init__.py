@@ -1,2 +1,0 @@
-from .account_login_repository import InMemoryAccountLoggingInRepository
-from .account_register_repository import InMemoryAccountRegisteringRepository

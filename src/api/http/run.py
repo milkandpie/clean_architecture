@@ -3,15 +3,11 @@ from fastapi import FastAPI
 
 from src.api.http.common import APIFactory, APICreatable
 from src.api.http.config import API_DEBUG
-from src.api.http.resources import (
-    TopUpResource,
-    RegisterResource,
-    LoginResource)
 
 
 class AuthAPIFactory(APICreatable):
     def __init__(self):
-        self.__factory = APIFactory([TopUpResource(), RegisterResource(), LoginResource()],
+        self.__factory = APIFactory([],
                                     name='API',
                                     on_start_up=[],
                                     debug=API_DEBUG)
