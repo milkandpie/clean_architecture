@@ -52,7 +52,7 @@ class Consumer(ABC):
 class BasedConsumerRunner:
     def __init__(self, consumer: Consumer, command_types: dict,
                  mediator_getter: Type[MediatorGetter],
-                 injector: BasedRepositoryInjector,
+                 injector: Type[BasedRepositoryInjector],
                  worker_name: str = None):
         log.info('Running %s consumer', worker_name or 'a long cycle system')
         self.__consumer = consumer
@@ -96,7 +96,7 @@ class BasedConsumerRunner:
                     try:
                         based_model = event_data['based_model_type'](**message.payload)
                         command = event_data['command_type'](**based_model.dict())
-                        mediator = self.__mediator_getter.get_mediator('command', injector=self.__injector)
+                        mediator = self.__mediator_getter.get_mediator('command', injector=self.__injector())
                         await mediator.handle(command)
                         break
 
