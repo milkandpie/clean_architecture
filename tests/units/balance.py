@@ -2,13 +2,13 @@ from datetime import datetime
 
 import pytest
 
-from clean_architecture.domains import Balance, EntityId
-from clean_architecture.applications import (
+from src.domains import Balance, EntityId
+from src.applications import (
     BalanceDecreasingService,
     BalanceDecreasingCommand,
     BalanceTopUpService,
     BalanceTopUpCommand)
-from clean_architecture.infrastructure import (
+from src.infrastructure import (
     InMemoryBalanceDecreasingRepository,
     InMemoryBalanceTopUpRepository,
     InMemoryDataBase,

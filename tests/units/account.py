@@ -2,14 +2,14 @@ from datetime import datetime
 
 import pytest
 
-from clean_architecture.applications import (
+from src.applications import (
     AccountRegisteringService,
     AccountRegisterCommand,
     AccountLoginCommand,
     AccountLoginService,
     BalanceTopUpService,
     BalanceTopUpCommand)
-from clean_architecture.infrastructure import (
+from src.infrastructure import (
     MD5PasswordEncoder, JWTTokenEncoder,
     InMemoryAccountLoggingInRepository,
     InMemoryAccountRegisteringRepository,
