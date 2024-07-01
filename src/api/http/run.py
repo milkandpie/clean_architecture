@@ -20,6 +20,6 @@ class AuthAPIFactory(APICreatable):
         return self.__factory.create_app()
 
 
+app = AuthAPIFactory().create_app()
 if __name__ == '__main__':
-    app = AuthAPIFactory().create_app()
     uvicorn.run(app)
